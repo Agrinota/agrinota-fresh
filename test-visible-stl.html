@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Highly Visible STL Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #222; color: white; }
+        #container { width: 800px; height: 600px; border: 3px solid #fff; margin: 20px 0; background: #000; }
+        #log { background: #333; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Super Visible STL Test</h1>
+    <div id="container"></div>
+    <div id="log">Starting...</div>
+
+    <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(msg) {
+            log.innerHTML += '<br>' + msg;
+            console.log(msg);
+        }
+        
+        addLog('Starting super visible test...');
+        addLog('THREE.js: ' + (typeof THREE !== 'undefined'));
+        addLog('STLLoader: ' + (typeof THREE.STLLoader !== 'undefined'));
+        
+        if (typeof THREE !== 'undefined' && typeof THREE.STLLoader !== 'undefined') {
+            const container = document.getElementById('container');
+            
+            // Scene with dark background for contrast
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111111);
+            
+            const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(800, 600);
+            container.appendChild(renderer.domElement);
+            
+            // EXTREMELY bright lighting from all directions
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.0); // Full brightness
+            scene.add(ambientLight);
+            
+            const light1 = new THREE.DirectionalLight(0xffffff, 1.0);
+            light1.position.set(10, 10, 10);
+            scene.add(light1);
+            
+            const light2 = new THREE.DirectionalLight(0xff0000, 0.8); // Red light
+            light2.position.set(-10, -10, 10);
+            scene.add(light2);
+            
+            const light3 = new THREE.DirectionalLight(0x00ff00, 0.8); // Green light
+            light3.position.set(10, -10, -10);
+            scene.add(light3);
+            
+            const light4 = new THREE.DirectionalLight(0x0000ff, 0.8); // Blue light
+            light4.position.set(-10, 10, -10);
+            scene.add(light4);
+            
+            addLog('Loading STL with maximum visibility...');
+            
+            const loader = new THREE.STLLoader();
+            loader.load(
+                './3d-models/agrinota-stake.stl',
+                function (geometry) {
+                    addLog('✅ STL LOADED! Vertices: ' + geometry.attributes.position.count);
+                    
+                    geometry.computeVertexNormals();
+                    
+                    // Create MULTIPLE versions for maximum visibility
+                    
+                    // 1. Bright solid version
+                    const solidMaterial = new THREE.MeshLambertMaterial({ 
+                        color: 0x00ff00,  // Bright green
+                        side: THREE.DoubleSide
+                    });
+                    const solidMesh = new THREE.Mesh(geometry, solidMaterial);
+                    
+                    // 2. Wireframe version (always visible)
+                    const wireframeMaterial = new THREE.MeshBasicMaterial({ 
+                        color: 0xff0000,  // Bright red
+                        wireframe: true,
+                        linewidth: 2
+                    });
+                    const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+                    
+                    // 3. Point cloud version
+                    const pointMaterial = new THREE.PointsMaterial({ 
+                        color: 0xffff00,  // Yellow points
+                        size: 2 
+                    });
+                    const pointMesh = new THREE.Points(geometry, pointMaterial);
+                    
+                    // Center and scale ALL versions
+                    const box = new THREE.Box3().setFromObject(solidMesh);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    addLog('Model size: ' + size.x.toFixed(1) + ' x ' + size.y.toFixed(1) + ' x ' + size.z.toFixed(1));
+                    
+                    // Center all meshes
+                    solidMesh.position.sub(center);
+                    wireframeMesh.position.sub(center);
+                    pointMesh.position.sub(center);
+                    
+                    // Scale all meshes
+                    const maxDimension = Math.max(size.x, size.y, size.z);
+                    const scale = 10 / maxDimension;
+                    solidMesh.scale.setScalar(scale);
+                    wireframeMesh.scale.setScalar(scale * 1.01); // Slightly larger wireframe
+                    pointMesh.scale.setScalar(scale * 1.02);     // Even larger points
+                    
+                    addLog('Applied scale: ' + scale.toFixed(4));
+                    
+                    // Add all versions to scene
+                    scene.add(solidMesh);
+                    scene.add(wireframeMesh);
+                    scene.add(pointMesh);
+                    
+                    // Position camera far enough to see everything
+                    camera.position.set(20, 15, 20);
+                    camera.lookAt(0, 0, 0);
+                    
+                    // Controls
+                    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    
+                    // Animation
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        
+                        // Rotate all meshes slowly
+                        solidMesh.rotation.y += 0.005;
+                        wireframeMesh.rotation.y += 0.007;
+                        pointMesh.rotation.y += 0.003;
+                        
+                        controls.update();
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+                    
+                    addLog('🎉 SUCCESS! You should see:');
+                    addLog('- Green solid model');
+                    addLog('- Red wireframe overlay');
+                    addLog('- Yellow points');
+                    addLog('- All slowly rotating');
+                },
+                function (progress) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    addLog('Loading: ' + percent + '%');
+                },
+                function (error) {
+                    addLog('❌ FAILED: ' + error);
+                }
+            );
+            
+        } else {
+            addLog('❌ Three.js or STLLoader not available');
+        }
+    </script>
+</body>
+</html>

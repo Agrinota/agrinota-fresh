@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic 3D Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        #container { width: 800px; height: 600px; border: 2px solid #333; margin: 20px 0; }
+        #log { background: #f0f0f0; padding: 10px; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Basic Three.js Test</h1>
+    <div id="container"></div>
+    <div id="log">Starting test...</div>
+
+    <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(msg) {
+            log.innerHTML += '<br>' + msg;
+            console.log(msg);
+        }
+        
+        addLog('THREE.js loaded: ' + (typeof THREE !== 'undefined'));
+        
+        if (typeof THREE !== 'undefined') {
+            addLog('THREE.js version: ' + THREE.REVISION);
+            
+            // Create a simple scene with a green cube
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();
+            
+            renderer.setSize(800, 600);
+            document.getElementById('container').appendChild(renderer.domElement);
+            
+            // Create a simple green cube
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+            
+            camera.position.z = 5;
+            
+            addLog('Scene created with green cube');
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            addLog('Animation started - you should see a rotating green cube');
+            
+        } else {
+            addLog('ERROR: THREE.js failed to load');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple STL Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        #container { width: 800px; height: 600px; background: #f0f0f0; border: 2px solid #333; }
+        #log { margin-top: 20px; padding: 10px; background: #e0e0e0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h2>STL Loading Test</h2>
+    <div id="container"></div>
+    <div id="log">Starting...</div>
+
+    <!-- Three.js - Using compatible version -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            console.log(message);
+            log.innerHTML += '<br>' + message;
+        }
+        
+        addLog('THREE.js version: ' + THREE.REVISION);
+        addLog('STLLoader available: ' + (typeof THREE.STLLoader !== 'undefined'));
+        
+        if (typeof THREE === 'undefined' || typeof THREE.STLLoader === 'undefined') {
+            addLog('ERROR: Required Three.js components not loaded');
+        } else {
+            const container = document.getElementById('container');
+            
+            // Scene setup
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
+            
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Lighting - Make it brighter
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            directionalLight.position.set(10, 10, 10);
+            scene.add(directionalLight);
+            
+            // Add another light from different angle
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-10, -10, 10);
+            scene.add(directionalLight2);
+            
+            addLog('Loading STL file...');
+            
+            // Load STL
+            const loader = new THREE.STLLoader();
+            loader.load(
+                'Agrinota%20Fully%20Assembled%20Final.stl',
+                function (geometry) {
+                    addLog('✅ STL loaded successfully!');
+                    addLog('Geometry vertices: ' + geometry.attributes.position.count);
+                    
+                    geometry.computeVertexNormals();
+                    const material = new THREE.MeshLambertMaterial({ 
+                        color: 0x00aa00,
+                        wireframe: false // Set to true if you want to see wireframe
+                    });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    
+                    // Add wireframe version for debugging
+                    const wireframeMaterial = new THREE.MeshBasicMaterial({ 
+                        color: 0x00aa00, 
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.3
+                    });
+                    const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+                    
+                    // Center the model first
+                    const box = new THREE.Box3().setFromObject(mesh);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    addLog('Model size: ' + size.x.toFixed(2) + ' x ' + size.y.toFixed(2) + ' x ' + size.z.toFixed(2));
+                    addLog('Model center: ' + center.x.toFixed(2) + ', ' + center.y.toFixed(2) + ', ' + center.z.toFixed(2));
+                    
+                    // Move to origin
+                    mesh.position.x = -center.x;
+                    mesh.position.y = -center.y;
+                    mesh.position.z = -center.z;
+                    
+                    // Scale to fit viewport (make it big enough to see)
+                    const maxDimension = Math.max(size.x, size.y, size.z);
+                    const scaleFactor = 5 / maxDimension; // Bigger scale factor
+                    mesh.scale.setScalar(scaleFactor);
+                    
+                    addLog('Scale factor: ' + scaleFactor.toFixed(4));
+                    
+                    scene.add(mesh);
+                    
+                    // Also add wireframe for debugging
+                    wireframeMesh.position.copy(mesh.position);
+                    wireframeMesh.scale.copy(mesh.scale);
+                    scene.add(wireframeMesh);
+                    
+                    // Position camera farther back
+                    camera.position.set(10, 10, 10);
+                    camera.lookAt(0, 0, 0);
+                    
+                    addLog('Camera positioned at: 10, 10, 10');
+                    
+                    // Controls
+                    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    
+                    // Render loop
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        controls.update();
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+                    
+                    addLog('✅ Rendering started successfully!');
+                },
+                function (progress) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    addLog('Loading: ' + percent + '%');
+                },
+                function (error) {
+                    addLog('❌ STL loading failed: ' + error);
+                    console.error('STL loading error:', error);
+                }
+            );
+        }
+    </script>
+</body>
+</html>
