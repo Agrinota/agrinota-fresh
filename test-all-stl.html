@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test All STL Files</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #container { width: 800px; height: 600px; border: 2px solid #333; margin: 20px 0; background: #f0f0f0; }
+        #log { background: #333; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; height: 200px; overflow-y: scroll; }
+    </style>
+</head>
+<body>
+    <h1>Test All Available STL Files</h1>
+    
+    <div>
+        <button onclick="testSTL('./Agrinota Fully Assembled Final.stl', '7.3MB File')">Test: Agrinota Fully Assembled Final.stl</button>
+        <button onclick="testSTL('./agrinota-stake-model.stl', '7.3MB Model')">Test: agrinota-stake-model.stl</button>
+        <button onclick="testSTL('./3d-models/agrinota-stake.stl', '489MB Detailed')">Test: 3d-models/agrinota-stake.stl</button>
+        <button onclick="clearScene()">Clear Scene</button>
+    </div>
+    
+    <div id="container"></div>
+    <div id="log">Click buttons above to test each STL file...</div>
+
+    <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        const log = document.getElementById('log');
+        let scene, camera, renderer, controls;
+        
+        function addLog(msg) {
+            log.innerHTML += '<br>' + msg;
+            log.scrollTop = log.scrollHeight;
+            console.log(msg);
+        }
+        
+        // Initialize Three.js scene
+        function initScene() {
+            const container = document.getElementById('container');
+            container.innerHTML = ''; // Clear previous
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x222222);
+            
+            camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(800, 600);
+            container.appendChild(renderer.domElement);
+            
+            // Bright lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            directionalLight.position.set(10, 10, 10);
+            scene.add(directionalLight);
+            
+            camera.position.set(20, 20, 20);
+            camera.lookAt(0, 0, 0);
+            
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            addLog('Scene initialized');
+        }
+        
+        function testSTL(filePath, description) {
+            addLog('\\n=== Testing: ' + description + ' ===');
+            addLog('File: ' + filePath);
+            
+            if (!scene) initScene();
+            
+            // Clear previous models
+            const objectsToRemove = [];
+            scene.traverse(function(child) {
+                if (child.isMesh && child.geometry) {
+                    objectsToRemove.push(child);
+                }
+            });
+            objectsToRemove.forEach(obj => scene.remove(obj));
+            
+            const loader = new THREE.STLLoader();
+            const startTime = Date.now();
+            
+            loader.load(
+                filePath,
+                function (geometry) {
+                    const loadTime = Date.now() - startTime;
+                    addLog('✅ SUCCESS! Loaded in ' + loadTime + 'ms');
+                    addLog('Vertices: ' + geometry.attributes.position.count);
+                    
+                    geometry.computeVertexNormals();
+                    
+                    // Create bright, visible materials
+                    const solidMaterial = new THREE.MeshLambertMaterial({ 
+                        color: 0x00ff00, 
+                        side: THREE.DoubleSide 
+                    });
+                    
+                    const wireframeMaterial = new THREE.MeshBasicMaterial({ 
+                        color: 0xff0000, 
+                        wireframe: true 
+                    });
+                    
+                    const solidMesh = new THREE.Mesh(geometry, solidMaterial);
+                    const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+                    
+                    // Center and scale
+                    const box = new THREE.Box3().setFromObject(solidMesh);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    addLog('Size: ' + size.x.toFixed(1) + ' x ' + size.y.toFixed(1) + ' x ' + size.z.toFixed(1));
+                    
+                    solidMesh.position.sub(center);
+                    wireframeMesh.position.sub(center);
+                    
+                    const maxDimension = Math.max(size.x, size.y, size.z);
+                    const scale = 150 / maxDimension; // Much bigger scale!
+                    solidMesh.scale.setScalar(scale);
+                    wireframeMesh.scale.setScalar(scale * 1.01);
+                    
+                    addLog('Scale: ' + scale.toFixed(4));
+                    
+                    scene.add(solidMesh);
+                    scene.add(wireframeMesh);
+                    
+                    addLog('🎉 Model added to scene!');
+                    addLog('You should see green solid + red wireframe');
+                },
+                function (progress) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    addLog('Loading: ' + percent + '%');
+                },
+                function (error) {
+                    addLog('❌ FAILED: ' + error);
+                }
+            );
+        }
+        
+        function clearScene() {
+            if (scene) {
+                const objectsToRemove = [];
+                scene.traverse(function(child) {
+                    if (child.isMesh && child.geometry) {
+                        objectsToRemove.push(child);
+                    }
+                });
+                objectsToRemove.forEach(obj => scene.remove(obj));
+                addLog('Scene cleared');
+            }
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', initScene);
+    </script>
+</body>
+</html>

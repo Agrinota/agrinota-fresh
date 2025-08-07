@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilot Program Application - Agrinota Guardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=League+Spartan:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" href="AGRINOTA FAVICON BIG.png" type="image/png" sizes="64x64">
+    <link rel="icon" href="AGRINOTA FAVICON BIG.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="AGRINOTA FAVICON BIG.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="AGRINOTA FAVICON BIG.png" sizes="180x180">
+    <script type="text/javascript">
+        (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.q = cal.q || []; return p(cal, ar); } }; C.Cal.ns = {}; C.Cal.q = C.Cal.q || []; d.head.appendChild(d.createElement("script")).src = A; })(window, "https://app.cal.com/embed/embed.js", "Cal");
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'spartan': ['League Spartan', 'sans-serif'],
+                    },
+                    colors: {
+                        'agrinota-green': '#0B6623',
+                        'agrinota-light': '#F0F4F2',
+                        'wildfire-red': '#DC2626',
+                        'earth-brown': '#8B4513',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #0B6623, #228B22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .form-field {
+            transition: all 0.3s ease;
+        }
+        .form-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(11, 102, 35, 0.15);
+        }
+        
+        /* Custom styling for Cal.com widget */
+        #cal-booking-widget {
+            font-family: 'Inter', sans-serif !important;
+        }
+        
+        /* Hide any Cal.com branding/footer to make it cleaner */
+        #cal-booking-widget iframe {
+            border-radius: 0 0 1rem 1rem;
+        }
+        
+        /* Ensure the widget fits nicely */
+        .cal-widget-container {
+            max-width: 100%;
+            background: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-inter">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="agrinota-guardian.html" class="flex items-center">
+                        <img src="Agrinota Logo Clear.png" alt="Agrinota Logo" class="h-8 w-auto" onerror="this.style.display='none'">
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <a href="agrinota-guardian.html" class="text-gray-700 hover:text-agrinota-green transition-colors px-4 py-2">
+                        ← Back to Main Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <!-- Hero Section with Guardian Green Background -->
+    <section class="py-24 md:py-32 px-6 relative overflow-hidden flex items-center min-h-[80vh]" style="background: linear-gradient(45deg, #002200 0%, #004400 8%, #006600 16%, #008800 24%, #00AA00 32%, #00CC00 40%, #00DD00 48%, #00BB00 56%, #009900 64%, #007700 72%, #005500 80%, #003300 88%, #001100 96%, #002200 100%); background-size: 400% 400%; animation: guardian-glow 8s ease-in-out infinite;">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <h1 class="text-5xl md:text-7xl font-spartan font-bold text-white mb-6 leading-tight" style="letter-spacing: -0.02em;">
+                Join the Guardian<br>
+                Pilot Program
+            </h1>
+            <p class="text-base md:text-lg text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
+                Partner with Agrinota to deploy cutting-edge wildfire detection technology. 
+                We're seeking 3-5 launch partners to test Guardian stakes and co-develop response workflows.
+            </p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto border border-white/20">
+                <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-white">10+ Stakes</div>
+                        <div class="text-sm text-white/80">Minimum Deployment</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-white">$0</div>
+                        <div class="text-sm text-white/80">Hardware Cost</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-white">Book Call</div>
+                        <div class="text-sm text-white/80">Schedule Consultation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        @keyframes guardian-glow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+    </style>
+
+    <!-- Main Form Section -->
+    <section class="py-16 md:py-24 bg-white px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-gray-50 rounded-3xl shadow-xl p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Pilot Application Form</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed font-light">
+                        Tell us about your organization and how Guardian stakes could protect your land and community.
+                    </p>
+                </div>
+
+                <form id="pilot-form" action="https://formspree.io/f/xeojgqrd" method="POST" class="space-y-8">
+                    <!-- Organization Information -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <span class="bg-agrinota-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                            Organization Information
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Organization Name *</label>
+                                <input type="text" name="organization" required 
+                                       class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Organization Type *</label>
+                                <select name="org_type" required 
+                                        class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                                    <option value="">Select type...</option>
+                                    <option value="fire_district">Fire District</option>
+                                    <option value="utility">Utility Company</option>
+                                    <option value="land_trust">Land Trust/Nonprofit</option>
+                                    <option value="agriculture">Agricultural Operation</option>
+                                    <option value="property_owner">Large Property Owner</option>
+                                    <option value="municipality">Municipality/Government</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <span class="bg-agrinota-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                            Primary Contact
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Full Name *</label>
+                                <input type="text" name="contact_name" required 
+                                       class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Title/Position *</label>
+                                <input type="text" name="contact_title" required 
+                                       class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Email Address *</label>
+                                <input type="email" name="email" required 
+                                       class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Phone Number *</label>
+                                <input type="tel" name="phone" required 
+                                       class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property Information -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <span class="bg-agrinota-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                            Property & Location Details
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-2">Property Location (City, State) *</label>
+                                    <input type="text" name="location" required 
+                                           class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-2">Total Acreage *</label>
+                                    <input type="number" name="acreage" required 
+                                           class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Property Description *</label>
+                                <textarea name="property_description" required rows="3"
+                                          class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent"
+                                          placeholder="Describe your property type, terrain, vegetation, and wildfire risk factors..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Wildfire History</label>
+                                <textarea name="wildfire_history" rows="3"
+                                          class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent"
+                                          placeholder="Any previous wildfire incidents or near-misses in your area?"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Requirements -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <span class="bg-agrinota-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                            Pilot Program Details
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-2">Desired Number of Stakes *</label>
+                                    <select name="stake_count" required 
+                                            class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent">
+                                        <option value="">Select range...</option>
+                                        <option value="10-20">10-20 stakes</option>
+                                        <option value="20-30">20-30 stakes</option>
+                                        <option value="30-50">30-50 stakes</option>
+                                        <option value="50-75">50-75 stakes</option>
+                                        <option value="75+">75+ stakes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Calendar Section -->
+                            <div class="col-span-full mt-8">
+                                <label class="block text-gray-700 font-medium mb-4 text-xl tracking-tight font-light">Schedule Your Consultation Call</label>
+                                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                                        <p class="text-gray-600 text-sm font-light">Select an available date and time for your pilot program consultation:</p>
+                                    </div>
+                                    
+                                    <!-- Cal.com Inline Widget -->
+                                    <iframe 
+                                        src="https://cal.com/aqsa-choudry-gdhnpa/agrinota?embed=true&theme=light"
+                                        width="100%" 
+                                        height="650" 
+                                        frameborder="0">
+                                    </iframe>
+                                    
+                                    <input type="hidden" name="scheduled_call" id="scheduled_call" value="">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Emergency Response Integration *</label>
+                                <textarea name="response_integration" required rows="3"
+                                          class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent"
+                                          placeholder="How would Guardian alerts integrate with your current emergency response protocols?"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Technical Resources</label>
+                                <textarea name="technical_resources" rows="3"
+                                          class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent"
+                                          placeholder="Describe your team's technical capabilities and any existing monitoring systems..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Goals & Expectations -->
+                    <div class="bg-gray-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <span class="bg-agrinota-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">5</span>
+                            Partnership Goals
+                        </h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Primary Goals for Guardian Deployment *</label>
+                                <div class="grid md:grid-cols-2 gap-3">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="goals" value="early_detection" class="mr-2 text-agrinota-green">
+                                        <span>Early wildfire detection</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="goals" value="community_protection" class="mr-2 text-agrinota-green">
+                                        <span>Community protection</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="goals" value="asset_protection" class="mr-2 text-agrinota-green">
+                                        <span>Critical asset protection</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="goals" value="response_time" class="mr-2 text-agrinota-green">
+                                        <span>Faster emergency response</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="goals" value="data_collection" class="mr-2 text-agrinota-green">
+                                        <span>Environmental data collection</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="goals" value="insurance" class="mr-2 text-agrinota-green">
+                                        <span>Insurance/liability reduction</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">What can you contribute to the pilot program? *</label>
+                                <textarea name="contribution" required rows="3"
+                                          class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent"
+                                          placeholder="Site access, installation support, testing feedback, data sharing, etc."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Additional Comments or Questions</label>
+                                <textarea name="additional_comments" rows="3"
+                                          class="form-field w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-agrinota-green focus:border-transparent"
+                                          placeholder="Anything else you'd like us to know about your organization or pilot program interest?"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center pt-8">
+                        <button type="submit" 
+                                class="bg-agrinota-green text-white px-12 py-4 rounded-xl text-xl font-semibold hover:bg-green-700 transition-all shadow-lg transform hover:scale-105">
+                            Submit Pilot Application
+                        </button>
+                        <p class="text-gray-500 text-sm mt-4">
+                            Your application will be sent directly to our team. No email client required.
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Happens Next -->
+    <section class="bg-white py-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">What Happens Next?</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed font-light">
+                    Our pilot program process is designed to ensure successful deployment and maximum value for all partners.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold group-hover:scale-110 transition-transform">
+                        1
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Application Review</h3>
+                    <p class="text-gray-600 text-sm">We evaluate your application and schedule an initial consultation call.</p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold group-hover:scale-110 transition-transform">
+                        2
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Site Assessment</h3>
+                    <p class="text-gray-600 text-sm">Technical site visit to assess deployment locations and requirements.</p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold group-hover:scale-110 transition-transform">
+                        3
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Pilot Agreement</h3>
+                    <p class="text-gray-600 text-sm">Finalize partnership terms, deployment timeline, and success metrics.</p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold group-hover:scale-110 transition-transform">
+                        4
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Deployment</h3>
+                    <p class="text-gray-600 text-sm">Install Guardian stakes, configure monitoring, and begin live testing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center mb-6">
+                <img src="Agrinota 500 x 500 Black and White Logo.png" alt="Agrinota Logo" class="h-48 w-auto" onerror="this.style.display='none'">
+            </div>
+            <p class="text-gray-300 mb-4 font-light">Building the next generation of wildfire intelligence.</p>
+            <p class="text-gray-400 text-sm font-light">© 2025 Agrinota, Inc. | San Francisco, CA | All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('pilot-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending Application...';
+            submitBtn.disabled = true;
+            
+            // Submit form data
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Success
+                    this.reset();
+                    alert('Thank you! Your pilot application has been submitted successfully. We\'ll review it and contact you within 5 business days.');
+                } else {
+                    response.json().then(data => {
+                        if (Object.hasOwnProperty.call(data, 'errors')) {
+                            alert('There was an error submitting your application: ' + data.errors.map(error => error.message).join(', '));
+                        } else {
+                            alert('There was an error submitting your application. Please try again.');
+                        }
+                    });
+                }
+            }).catch(error => {
+                alert('There was an error submitting your application. Please try again.');
+            }).finally(() => {
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Listen for Cal.com booking confirmations via iframe messages
+        window.addEventListener('message', function(e) {
+            if (e.origin === 'https://cal.com' && e.data && e.data.type === 'CAL:booking_successful') {
+                // Update form when they schedule
+                document.getElementById('scheduled_call').value = 'Consultation scheduled via Cal.com';
+                
+                // Show success message
+                const calendarSection = document.querySelector('iframe[src*="cal.com"]').parentElement;
+                calendarSection.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-4">✅</div>
+                        <h3 class="text-xl font-semibold text-green-600 mb-2">Consultation Scheduled!</h3>
+                        <p class="text-gray-600">Your consultation call has been booked. You can now complete the rest of the application below.</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Add form field animations
+        document.querySelectorAll('.form-field').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            field.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

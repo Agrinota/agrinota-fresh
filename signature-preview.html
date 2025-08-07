@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aqsa Choudry - Gmail Signature Preview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .preview-box {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .signature-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 4px;
+        }
+        .copy-button {
+            background-color: #0B6623;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .copy-button:hover {
+            background-color: #094d1c;
+        }
+        .code-box {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="preview-box">
+            <h1>Gmail Signature Preview</h1>
+            <p class="subtitle">Aqsa Choudry - Founder, Agrinota</p>
+            
+            <h3>Live Preview:</h3>
+            <div class="signature-container">
+                <!-- Gmail-Compatible Email Signature -->
+                <table style="font-family: 'Inter', 'Satoshi', 'Nunito Sans', Arial, sans-serif; 
+                              background: #ffffff;
+                              border-radius: 8px;
+                              border: 1px solid #E8ECEC;
+                              max-width: 380px;
+                              border-collapse: collapse;
+                              padding: 0;
+                              margin: 0;">
+                  <tr>
+                    <td style="padding: 18px;">
+                      
+                      <!-- Header with name and photo -->
+                      <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <tr>
+                          <td style="width: 56px; padding-right: 14px; vertical-align: top;">
+                            <!-- Photo with border -->
+                            <img src="Aqsa Professional Headshot Circular.png" 
+                                 width="42" height="42" 
+                                 style="border-radius: 50%; 
+                                        display: block; 
+                                        border: 2px solid rgba(11, 102, 35, 0.2);
+                                        box-shadow: 0 3px 8px rgba(11, 102, 35, 0.15);" 
+                                 alt="Aqsa Choudry">
+                          </td>
+                          <td style="vertical-align: top;">
+                            <!-- Name -->
+                            <div style="font-size: 24px; 
+                                        font-weight: 700; 
+                                        color: #2E2E2E;
+                                        line-height: 1.1;
+                                        margin-bottom: 3px;">Aqsa Choudry</div>
+                            
+                            <!-- Title -->
+                            <div style="font-size: 14px;
+                                        font-weight: 500;
+                                        color: #0B6623;
+                                        margin-bottom: 2px;">Founder, Agrinota</div>
+                            
+                            <!-- Subtitle -->
+                            <div style="font-size: 11px;
+                                        color: #6C7A89;
+                                        font-weight: 400;">Wildfire Prevention Technology</div>
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <!-- Contact info -->
+                      <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px;">
+                        <tr>
+                          <td>
+                            <!-- Location -->
+                            <div style="margin-bottom: 6px;">
+                              <span style="color: #6C7A89; font-size: 11px; margin-right: 6px;">📍</span>
+                              <span style="color: #2E2E2E; font-size: 11px;">San Francisco, CA</span>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div style="margin-bottom: 6px;">
+                              <span style="color: #6C7A89; font-size: 11px; margin-right: 6px;">📧</span>
+                              <a href="mailto:team@agrinota.org" 
+                                 style="color: #0B6623; 
+                                        text-decoration: none; 
+                                        font-size: 11px; 
+                                        font-weight: 500;">team@agrinota.org</a>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <!-- Social links - Table-based for Gmail compatibility -->
+                      <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px;">
+                        <tr>
+                          <td style="text-align: center;">
+                            <table style="display: inline-table; border-collapse: collapse;">
+                              <tr>
+                                <!-- X Button -->
+                                <td style="padding: 0 12px;">
+                                  <a href="https://x.com/AqsaChoudryfrfr" 
+                                     target="_blank"
+                                     style="display: inline-block;
+                                            width: 28px;
+                                            height: 28px;
+                                            background: #F0F4F2;
+                                            border: 1px solid #E8ECEC;
+                                            border-radius: 50%;
+                                            text-decoration: none;
+                                            text-align: center;
+                                            line-height: 26px;
+                                            font-size: 11px;
+                                            font-weight: bold;
+                                            color: #0B6623;">𝕏</a>
+                                </td>
+                                
+                                <!-- LinkedIn Button -->
+                                <td style="padding: 0 12px;">
+                                  <a href="https://www.linkedin.com/in/aqsa-choudry-434a67245" 
+                                     target="_blank"
+                                     style="display: inline-block;
+                                            width: 28px;
+                                            height: 28px;
+                                            background: #F0F4F2;
+                                            border: 1px solid #E8ECEC;
+                                            border-radius: 50%;
+                                            text-decoration: none;
+                                            text-align: center;
+                                            line-height: 26px;
+                                            font-size: 11px;
+                                            font-weight: bold;
+                                            color: #0B6623;">in</a>
+                                </td>
+                                
+                                <!-- Email Button -->
+                                <td style="padding: 0 12px;">
+                                  <a href="mailto:team@agrinota.org"
+                                     style="display: inline-block;
+                                            width: 28px;
+                                            height: 28px;
+                                            background: #F0F4F2;
+                                            border: 1px solid #E8ECEC;
+                                            border-radius: 50%;
+                                            text-decoration: none;
+                                            text-align: center;
+                                            line-height: 26px;
+                                            font-size: 11px;
+                                            font-weight: bold;
+                                            color: #0B6623;">@</a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <!-- Mission statement -->
+                      <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                        <tr>
+                          <td style="background: #F0F4F2;
+                                     border-left: 3px solid #0B6623;
+                                     border-radius: 6px;
+                                     padding: 12px;">
+                            <div style="color: #2E2E2E; 
+                                        font-size: 11px; 
+                                        line-height: 1.4; 
+                                        font-weight: 400;">
+                              Building AI-powered wildfire detection and prevention for California and beyond
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <!-- Logo at bottom -->
+                      <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+                        <tr>
+                          <td style="text-align: center;">
+                            <img src="Agrinota Logo Clear.png" 
+                                 width="90" height="30" 
+                                 style="opacity: 0.8; display: block; margin: 0 auto;" 
+                                 alt="Agrinota Logo">
+                          </td>
+                        </tr>
+                      </table>
+                      
+                    </td>
+                  </tr>
+                </table>
+            </div>
+            
+            <button class="copy-button" onclick="copyHTML()">Copy HTML to Clipboard</button>
+            
+            <h3 style="margin-top: 40px;">HTML Code:</h3>
+            <div class="code-box">
+                <pre id="html-code">&lt;div style="font-family: Helvetica, Arial, sans-serif; color: #2e2e2e; font-size: 14px; line-height: 1.5;"&gt;
+  &lt;table style="border: none; border-collapse: collapse;"&gt;
+    &lt;tr&gt;
+      &lt;td style="vertical-align: top; padding-right: 12px; padding-bottom: 0;"&gt;
+        &lt;img src="https://drive.google.com/uc?export=view&id=19kmwW10M81UU1Yn7_KgK_S8IKf5Bl4cH" width="64" height="64" style="border-radius: 50%; border: 1px solid #ccc; display: block;" alt="Aqsa Choudry"&gt;
+      &lt;/td&gt;
+      &lt;td style="vertical-align: top; padding-bottom: 0;"&gt;
+        &lt;strong style="font-size: 15px; color: #2e2e2e;"&gt;Aqsa Choudry&lt;/strong&gt;&lt;br&gt;
+        Founder, &lt;span style="color: #0B6623; font-weight: bold;"&gt;Agrinota&lt;/span&gt;&lt;br&gt;
+        📍 San Francisco, CA&lt;br&gt;
+        📧 &lt;a href="mailto:team@agrinota.org" style="color: #1155cc; text-decoration: none;"&gt;team@agrinota.org&lt;/a&gt;&lt;br&gt;
+        🔗 &lt;a href="https://www.linkedin.com/in/aqsa-choudry-434a67245" target="_blank" style="color: #1155cc; text-decoration: none;"&gt;LinkedIn&lt;/a&gt;&lt;br&gt;&lt;br&gt;
+        &lt;em style="color: #0B6623; font-size: 13px;"&gt;🌿 Building AI-powered wildfire detection and prevention for California and beyond&lt;/em&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+        
+        <div class="preview-box">
+            <h3>How to add to Gmail:</h3>
+            <ol>
+                <li>Go to Gmail Settings → General → Signature</li>
+                <li>Click "Create new" to make a new signature</li>
+                <li>Name it (e.g., "Agrinota")</li>
+                <li>Click the three dots ⋮ → "Insert HTML"</li>
+                <li>Paste the HTML code from above</li>
+                <li>Click "Save Changes" at the bottom</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        function copyHTML() {
+            const htmlCode = `<table style="font-family: 'Inter', 'Satoshi', 'Nunito Sans', Arial, sans-serif; 
+                    background: #ffffff;
+                    border-radius: 8px;
+                    padding: 18px;
+                    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+                    max-width: 380px;
+                    border: 1px solid #E8ECEC;">
+  
+  <div style="display: flex; align-items: center; margin-bottom: 15px;">
+    <div style="position: relative; margin-right: 14px;">
+      <div style="position: absolute; 
+                  top: -2px; left: -2px; right: -2px; bottom: -2px;
+                  border-radius: 50%;
+                  background: linear-gradient(135deg, #A4D4AE, #0B6623);
+                  filter: blur(3px);
+                  opacity: 0.4;"></div>
+      <div style="position: absolute; 
+                  top: -1px; left: -1px; right: -1px; bottom: -1px;
+                  border-radius: 50%;
+                  border: 1px solid rgba(11, 102, 35, 0.2);"></div>
+      <img src="Aqsa Professional Headshot Circular.png" 
+           width="42" height="42" 
+           style="border-radius: 50%; 
+                  display: block; 
+                  position: relative;
+                  z-index: 3;
+                  box-shadow: 0 3px 8px rgba(11, 102, 35, 0.15);" 
+           alt="Aqsa Choudry">
+    </div>
+    <div style="flex: 1;">
+      <div style="font-size: 24px; 
+                  font-weight: 700; 
+                  color: #2E2E2E;
+                  letter-spacing: -0.025em;
+                  line-height: 1.1;
+                  margin-bottom: 3px;">Aqsa Choudry</div>
+      <div style="font-size: 14px;
+                  font-weight: 500;
+                  color: #0B6623;
+                  margin-bottom: 2px;">Founder, Agrinota</div>
+      <div style="font-size: 11px;
+                  color: #6C7A89;
+                  font-weight: 400;">Wildfire Prevention Technology</div>
+    </div>
+  </div>
+  
+  <div style="margin-bottom: 14px;">
+    <div style="margin-bottom: 6px; display: flex; align-items: center;">
+      <span style="color: #6C7A89; font-size: 11px; margin-right: 6px;">📍</span>
+      <span style="color: #2E2E2E; font-size: 11px;">San Francisco, CA</span>
+    </div>
+    <div style="margin-bottom: 6px; display: flex; align-items: center;">
+      <span style="color: #6C7A89; font-size: 11px; margin-right: 6px;">📧</span>
+      <a href="mailto:team@agrinota.org" 
+         style="color: #0B6623; 
+                text-decoration: none; 
+                font-size: 11px; 
+                font-weight: 500;">team@agrinota.org</a>
+    </div>
+  </div>
+  
+  <div style="margin-bottom: 14px; text-align: center;">
+    <div style="display: inline-flex; gap: 24px; justify-content: center; align-items: center;">
+      <a href="https://x.com/AqsaChoudryfrfr" 
+         target="_blank"
+         style="display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                background: #F0F4F2;
+                border: 1px solid #E8ECEC;
+                border-radius: 50%;
+                text-decoration: none;
+                font-size: 11px;
+                font-weight: bold;
+                color: #0B6623;
+                line-height: 1;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);">𝕏</a>
+      <a href="https://www.linkedin.com/in/aqsa-choudry-434a67245" 
+         target="_blank"
+         style="display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                background: #F0F4F2;
+                border: 1px solid #E8ECEC;
+                border-radius: 50%;
+                text-decoration: none;
+                font-size: 11px;
+                font-weight: bold;
+                color: #0B6623;
+                line-height: 1;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);">in</a>
+      <a href="mailto:team@agrinota.org"
+         style="display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 28px;
+                height: 28px;
+                background: #F0F4F2;
+                border: 1px solid #E8ECEC;
+                border-radius: 50%;
+                text-decoration: none;
+                font-size: 11px;
+                font-weight: bold;
+                color: #0B6623;
+                line-height: 1;
+                text-align: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);">@</a>
+    </div>
+  </div>
+  
+  
+  <div style="background: #F0F4F2;
+              border-left: 3px solid #0B6623;
+              border-radius: 6px;
+              padding: 12px;
+              margin-bottom: 10px;">
+    <div style="color: #2E2E2E; 
+                font-size: 11px; 
+                line-height: 1.4; 
+                font-weight: 400;">
+      Building AI-powered wildfire detection and prevention for California and beyond
+    </div>
+  </div>
+  
+  <div style="text-align: center; margin-top: 12px;">
+    <img src="Agrinota Logo Clear.png" 
+         width="90" height="30" 
+         style="opacity: 0.8;" 
+         alt="Agrinota Logo">
+  </div>
+</div>`;
+            
+            navigator.clipboard.writeText(htmlCode).then(function() {
+                const button = document.querySelector('.copy-button');
+                button.textContent = 'Copied!';
+                button.style.backgroundColor = '#059669';
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy HTML to Clipboard';
+                    button.style.backgroundColor = '#0B6623';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+                alert('Please select and copy the HTML manually');
+            });
+        }
+    </script>
+</body>
+</html>

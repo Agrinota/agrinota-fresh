@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota Stake - 3D Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        #viewer-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(34, 139, 34, 0.3);
+            border-top: 4px solid #228B22;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .controls-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+        
+        .control-btn {
+            background: #228B22;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: #2ea043;
+            transform: translateY(-1px);
+        }
+        
+        .control-btn.active {
+            background: #dc2626;
+        }
+        
+        input[type="range"] {
+            width: 150px;
+            margin-bottom: 10px;
+        }
+        
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .title-header {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            z-index: 100;
+        }
+        
+        .title-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #228B22;
+            margin-bottom: 5px;
+        }
+        
+        .title-header p {
+            font-size: 14px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div id="viewer-container">
+        <div id="loading-screen">
+            <div class="loading-spinner"></div>
+            <p>Loading Agrinota Stake Model...</p>
+            <p id="loading-progress">0%</p>
+        </div>
+        
+        <div class="title-header">
+            <h1>Agrinota Guardian Stake</h1>
+            <p>Interactive 3D Model Viewer</p>
+        </div>
+        
+        <div class="controls-panel">
+            <div class="control-group">
+                <label>Animation</label>
+                <button class="control-btn" id="auto-rotate-btn">Auto Rotate</button>
+                <button class="control-btn" id="reset-view-btn">Reset View</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Lighting</label>
+                <input type="range" id="ambient-light" min="0" max="2" step="0.1" value="0.6">
+                <br>
+                <input type="range" id="directional-light" min="0" max="3" step="0.1" value="1.5">
+            </div>
+            
+            <div class="control-group">
+                <label>Environment</label>
+                <button class="control-btn" id="wireframe-btn">Wireframe</button>
+                <button class="control-btn" id="background-btn">Background</button>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <strong>Controls:</strong><br>
+            • Left Click + Drag: Rotate<br>
+            • Right Click + Drag: Pan<br>
+            • Mouse Wheel: Zoom<br>
+            • Double Click: Focus
+        </div>
+    </div>
+
+    <script>
+        let scene, camera, renderer, controls, model;
+        let ambientLight, directionalLight;
+        let autoRotateEnabled = true;
+        let wireframeMode = false;
+        let backgroundMode = 0; // 0: gradient, 1: space, 2: solid
+
+        function init() {
+            const container = document.getElementById('viewer-container');
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            updateBackground();
+            
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(5, 3, 5);
+            
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            
+            container.appendChild(renderer.domElement);
+            
+            // Lighting setup
+            ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(10, 10, 5);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+            
+            // Add some rim lighting
+            const rimLight = new THREE.DirectionalLight(0x0088ff, 0.5);
+            rimLight.position.set(-5, 0, -5);
+            scene.add(rimLight);
+            
+            // Controls setup
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 1;
+            controls.maxDistance = 50;
+            controls.minDistance = 1;
+            
+            // Load model
+            loadModel();
+            
+            // Setup UI
+            setupControls();
+            
+            // Start animation loop
+            animate();
+        }
+        
+        // STL Loader implementation
+        class STLLoader extends THREE.Loader {
+            load(url, onLoad, onProgress, onError) {
+                const loader = new THREE.FileLoader(this.manager);
+                loader.setPath(this.path);
+                loader.setResponseType('arraybuffer');
+                loader.load(url, (buffer) => {
+                    try {
+                        onLoad(this.parse(buffer));
+                    } catch (e) {
+                        if (onError) {
+                            onError(e);
+                        } else {
+                            console.error(e);
+                        }
+                        this.manager.itemError(url);
+                    }
+                }, onProgress, onError);
+            }
+
+            parse(buffer) {
+                const view = new DataView(buffer);
+                const isLittleEndian = true;
+                let offset = 80; // Skip header
+                const triangles = view.getUint32(offset, isLittleEndian);
+                offset += 4;
+
+                const geometry = new THREE.BufferGeometry();
+                const positions = [];
+                const normals = [];
+
+                for (let i = 0; i < triangles; i++) {
+                    // Normal vector
+                    const nx = view.getFloat32(offset, isLittleEndian);
+                    const ny = view.getFloat32(offset + 4, isLittleEndian);
+                    const nz = view.getFloat32(offset + 8, isLittleEndian);
+                    offset += 12;
+
+                    // Vertices
+                    for (let j = 0; j < 3; j++) {
+                        const x = view.getFloat32(offset, isLittleEndian);
+                        const y = view.getFloat32(offset + 4, isLittleEndian);
+                        const z = view.getFloat32(offset + 8, isLittleEndian);
+                        positions.push(x, y, z);
+                        normals.push(nx, ny, nz);
+                        offset += 12;
+                    }
+                    offset += 2; // Skip attribute byte count
+                }
+
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+                return geometry;
+            }
+        }
+
+        function loadModel() {
+            const loader = new STLLoader();
+            
+            loader.load(
+                './3d-models/agrinota-stake.stl',
+                function(geometry) {
+                    // Create material with nice Agrinota green color
+                    const material = new THREE.MeshPhongMaterial({ 
+                        color: 0x228B22,
+                        shininess: 100,
+                        transparent: false
+                    });
+                    
+                    model = new THREE.Mesh(geometry, material);
+                    
+                    // Process the geometry
+                    geometry.computeBoundingBox();
+                    const box = geometry.boundingBox;
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    // Center the model
+                    model.position.sub(center);
+                    
+                    // Scale appropriately - STL models often need different scaling
+                    const maxSize = Math.max(size.x, size.y, size.z);
+                    const scale = 4 / maxSize;
+                    model.scale.setScalar(scale);
+                    
+                    // Set initial rotation for best viewing angle
+                    model.rotation.x = Math.PI * 0.1;
+                    model.rotation.y = Math.PI * 0.25;
+                    
+                    // Enable shadows
+                    model.castShadow = true;
+                    model.receiveShadow = true;
+                    
+                    // Compute vertex normals for proper lighting
+                    geometry.computeVertexNormals();
+                    
+                    scene.add(model);
+                    hideLoadingScreen();
+                },
+                function(progress) {
+                    const percent = Math.round((progress.loaded / progress.total * 100));
+                    document.getElementById('loading-progress').textContent = percent + '%';
+                },
+                function(error) {
+                    console.error('Error loading STL model:', error);
+                    alert('Error loading STL model: ' + error.message + '\nFile path: ./Agrinota%20Fully%20Assembled%20Final.stl');
+                    createFallbackModel();
+                    hideLoadingScreen();
+                }
+            );
+        }
+        
+        function createFallbackModel() {
+            const group = new THREE.Group();
+            
+            // Main stake
+            const stakeGeom = new THREE.CylinderGeometry(0.15, 0.2, 4, 16);
+            const stakeMat = new THREE.MeshPhongMaterial({ color: 0x228B22 });
+            const stake = new THREE.Mesh(stakeGeom, stakeMat);
+            group.add(stake);
+            
+            // Solar panel
+            const panelGeom = new THREE.BoxGeometry(1.2, 0.08, 1);
+            const panelMat = new THREE.MeshPhongMaterial({ color: 0x1a1a2e });
+            const panel = new THREE.Mesh(panelGeom, panelMat);
+            panel.position.y = 2.2;
+            group.add(panel);
+            
+            // Sensor housing
+            const sensorGeom = new THREE.BoxGeometry(0.3, 0.5, 0.2);
+            const sensorMat = new THREE.MeshPhongMaterial({ color: 0x444444 });
+            const sensor = new THREE.Mesh(sensorGeom, sensorMat);
+            sensor.position.set(0, 1.5, 0.15);
+            group.add(sensor);
+            
+            model = group;
+            scene.add(model);
+        }
+        
+        function setupControls() {
+            // Auto rotate toggle
+            document.getElementById('auto-rotate-btn').addEventListener('click', function() {
+                autoRotateEnabled = !autoRotateEnabled;
+                controls.autoRotate = autoRotateEnabled;
+                this.classList.toggle('active', !autoRotateEnabled);
+                this.textContent = autoRotateEnabled ? 'Auto Rotate' : 'Manual';
+            });
+            
+            // Reset view
+            document.getElementById('reset-view-btn').addEventListener('click', function() {
+                camera.position.set(5, 3, 5);
+                controls.target.set(0, 0, 0);
+                controls.update();
+            });
+            
+            // Lighting controls
+            document.getElementById('ambient-light').addEventListener('input', function() {
+                ambientLight.intensity = parseFloat(this.value);
+            });
+            
+            document.getElementById('directional-light').addEventListener('input', function() {
+                directionalLight.intensity = parseFloat(this.value);
+            });
+            
+            // Wireframe toggle
+            document.getElementById('wireframe-btn').addEventListener('click', function() {
+                wireframeMode = !wireframeMode;
+                if (model) {
+                    model.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            child.material.wireframe = wireframeMode;
+                        }
+                    });
+                }
+                this.classList.toggle('active', wireframeMode);
+            });
+            
+            // Background toggle
+            document.getElementById('background-btn').addEventListener('click', function() {
+                backgroundMode = (backgroundMode + 1) % 3;
+                updateBackground();
+            });
+        }
+        
+        function updateBackground() {
+            switch(backgroundMode) {
+                case 0:
+                    scene.background = new THREE.Color(0x0f0f23);
+                    break;
+                case 1:
+                    // Space-like background
+                    const loader = new THREE.CubeTextureLoader();
+                    scene.background = new THREE.Color(0x000011);
+                    break;
+                case 2:
+                    scene.background = new THREE.Color(0xffffff);
+                    break;
+            }
+        }
+        
+        function hideLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

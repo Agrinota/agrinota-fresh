@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota Guardian - Fixed 3D Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        #stake-3d-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: #f0f0f0;
+        }
+        #stake-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-8">Agrinota Guardian 3D Model Viewer</h1>
+        
+        <div id="stake-3d-container">
+            <div id="stake-loading">Loading 3D model...</div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <p class="text-sm text-gray-600">Drag to rotate • Scroll to zoom</p>
+        </div>
+    </div>
+
+    <script>
+        function init3DViewer() {
+            console.log('Initializing 3D viewer...');
+            
+            const container = document.getElementById('stake-3d-container');
+            const loadingDiv = document.getElementById('stake-loading');
+            
+            if (!container) {
+                console.error('Container not found');
+                return;
+            }
+            
+            // Scene setup
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f0f0); // Light gray background
+            
+            // Camera setup
+            const camera = new THREE.PerspectiveCamera(
+                45,
+                container.offsetWidth / container.offsetHeight,
+                0.1,
+                10000
+            );
+            camera.position.set(100, 100, 100);
+            camera.lookAt(0, 0, 0);
+            
+            // Renderer setup
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+            
+            // Clear loading div
+            if (loadingDiv) {
+                container.removeChild(loadingDiv);
+            }
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(50, 100, 50);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            const light2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            light2.position.set(-50, 50, -50);
+            scene.add(light2);
+            
+            // Controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            
+            // Add grid for reference
+            const gridHelper = new THREE.GridHelper(200, 20);
+            scene.add(gridHelper);
+            
+            // Add axes helper
+            const axesHelper = new THREE.AxesHelper(100);
+            scene.add(axesHelper);
+            
+            // Load STL
+            const loader = new THREE.STLLoader();
+            console.log('Loading STL file...');
+            
+            loader.load(
+                './AGRINOTA WHOLE 3D VIEW.stl',
+                function(geometry) {
+                    console.log('STL loaded successfully');
+                    console.log('Geometry vertices:', geometry.attributes.position.count);
+                    
+                    geometry.computeVertexNormals();
+                    geometry.center();
+                    
+                    const material = new THREE.MeshPhongMaterial({
+                        color: 0x0B6623,
+                        specular: 0x111111,
+                        shininess: 200,
+                        side: THREE.DoubleSide
+                    });
+                    
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                    
+                    // Get bounding box
+                    const box = new THREE.Box3().setFromObject(mesh);
+                    const size = box.getSize(new THREE.Vector3());
+                    console.log('Model size:', size);
+                    
+                    // Scale to reasonable size
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    if (maxDim > 100) {
+                        const scale = 100 / maxDim;
+                        mesh.scale.multiplyScalar(scale);
+                        console.log('Scaled model by:', scale);
+                    }
+                    
+                    scene.add(mesh);
+                    
+                    // Adjust camera to fit model
+                    const newBox = new THREE.Box3().setFromObject(mesh);
+                    const newSize = newBox.getSize(new THREE.Vector3());
+                    const maxNewDim = Math.max(newSize.x, newSize.y, newSize.z);
+                    
+                    camera.position.set(maxNewDim * 1.5, maxNewDim * 1.5, maxNewDim * 1.5);
+                    camera.lookAt(0, 0, 0);
+                    controls.update();
+                    
+                    console.log('Model added to scene');
+                },
+                function(progress) {
+                    if (progress.total > 0) {
+                        const percent = (progress.loaded / progress.total * 100).toFixed(0);
+                        console.log('Loading progress:', percent + '%');
+                    }
+                },
+                function(error) {
+                    console.error('Error loading STL:', error);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.textContent = 'Error loading model: ' + error.message;
+                    errorDiv.style.color = 'red';
+                    errorDiv.style.padding = '20px';
+                    errorDiv.style.textAlign = 'center';
+                    container.appendChild(errorDiv);
+                }
+            );
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Handle resize
+            window.addEventListener('resize', function() {
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+            });
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', init3DViewer);
+    </script>
+</body>
+</html>

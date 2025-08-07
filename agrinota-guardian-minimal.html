@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota – The Earth Speaks. We're Building the Guardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=League+Spartan:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Three.js - Simple working version -->
+    <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div class="min-h-screen bg-white">
+        <!-- Simple test for 3D viewer -->
+        <div class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-6">Agrinota Guardian</h1>
+                <p class="text-lg text-gray-600">Testing 3D Stake Model</p>
+            </div>
+            
+            <!-- 3D Stake Model Viewer -->
+            <div class="bg-white rounded-3xl p-8 shadow-xl max-w-4xl mx-auto">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold mb-4">Guardian Stake 3D Model</h3>
+                </div>
+                
+                <!-- 3D Container -->
+                <div id="stake-3d-container" class="w-full h-96 rounded-xl bg-gray-100 flex items-center justify-center">
+                    <div id="stake-loading" class="text-gray-500">Loading 3D model...</div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-600">Drag to rotate • Scroll to zoom</p>
+                </div>
+            </div>
+            
+            <!-- Demo iframe -->
+            <div class="mt-16 bg-white rounded-3xl p-8 shadow-xl">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold mb-4">Live Guardian Dashboard</h3>
+                </div>
+                
+                <div class="rounded-2xl overflow-hidden shadow-lg border">
+                    <iframe 
+                        src="demo.html" 
+                        width="100%" 
+                        height="1200" 
+                        frameborder="0"
+                        style="display: block; border: none; border-radius: 1rem;"
+                        title="Agrinota Guardian Dashboard Demo">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple 3D viewer - minimal version
+        function init3DStake() {
+            console.log('Initializing simple 3D viewer...');
+            
+            const container = document.getElementById('stake-3d-container');
+            const loadingDiv = document.getElementById('stake-loading');
+            
+            if (!container) {
+                console.error('Container not found');
+                return;
+            }
+            
+            // Check Three.js
+            if (typeof THREE === 'undefined') {
+                console.error('THREE.js not loaded');
+                loadingDiv.textContent = 'THREE.js failed to load';
+                return;
+            }
+            
+            console.log('THREE.js version:', THREE.REVISION);
+            
+            // Create scene
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
+            
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Simple lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 10);
+            scene.add(directionalLight);
+            
+            // Load STL
+            console.log('Loading STL file...');
+            const loader = new THREE.STLLoader();
+            
+            loader.load(
+                './Agrinota Fully Assembled Final.stl',
+                function (geometry) {
+                    console.log('STL loaded successfully!');
+                    console.log('Vertices:', geometry.attributes.position.count);
+                    
+                    geometry.computeVertexNormals();
+                    
+                    const material = new THREE.MeshLambertMaterial({ 
+                        color: 0x00aa00,
+                        side: THREE.DoubleSide
+                    });
+                    
+                    const mesh = new THREE.Mesh(geometry, material);
+                    
+                    // Center and scale
+                    const box = new THREE.Box3().setFromObject(mesh);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    
+                    console.log('Model size:', size.x.toFixed(2), size.y.toFixed(2), size.z.toFixed(2));
+                    
+                    // Move to center
+                    mesh.position.sub(center);
+                    
+                    // Scale to reasonable size
+                    const maxDimension = Math.max(size.x, size.y, size.z);
+                    const scale = 20 / maxDimension;
+                    mesh.scale.setScalar(scale);
+                    
+                    console.log('Applied scale:', scale.toFixed(4));
+                    
+                    scene.add(mesh);
+                    
+                    // Position camera
+                    camera.position.set(30, 20, 30);
+                    camera.lookAt(0, 0, 0);
+                    
+                    // Controls
+                    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.25;
+                    
+                    // Remove loading
+                    loadingDiv.remove();
+                    
+                    // Animation loop
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        controls.update();
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+                    
+                    console.log('3D viewer ready!');
+                },
+                function (progress) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    console.log('Loading:', percent + '%');
+                    loadingDiv.textContent = 'Loading: ' + percent + '%';
+                },
+                function (error) {
+                    console.error('Load failed:', error);
+                    loadingDiv.textContent = 'Failed to load model';
+                    loadingDiv.style.color = 'red';
+                }
+            );
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded, initializing 3D viewer...');
+            setTimeout(init3DStake, 500);
+        });
+    </script>
+</body>
+</html>

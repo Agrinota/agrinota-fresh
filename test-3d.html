@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        #container { width: 800px; height: 600px; background: #f0f0f0; border: 1px solid #ccc; }
+        #status { margin-top: 10px; padding: 10px; background: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <h1>3D Model Test</h1>
+    <div id="container"></div>
+    <div id="status">Loading...</div>
+
+    <!-- Three.js -->
+    <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://unpkg.com/three@0.144.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        const status = document.getElementById('status');
+        
+        status.innerHTML = 'THREE.js loaded: ' + (typeof THREE !== 'undefined') + '<br>';
+        status.innerHTML += 'STLLoader available: ' + (typeof THREE.STLLoader !== 'undefined') + '<br>';
+        status.innerHTML += 'OrbitControls available: ' + (typeof THREE.OrbitControls !== 'undefined') + '<br>';
+
+        if (typeof THREE !== 'undefined' && typeof THREE.STLLoader !== 'undefined') {
+            const container = document.getElementById('container');
+            
+            // Scene setup
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
+            
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // Load STL
+            const loader = new THREE.STLLoader();
+            loader.load(
+                './Agrinota Fully Assembled Final.stl',
+                function (geometry) {
+                    status.innerHTML += 'STL loaded successfully!<br>';
+                    
+                    geometry.computeVertexNormals();
+                    const material = new THREE.MeshLambertMaterial({ color: 0x00aa00 });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    
+                    // Center the model
+                    const box = new THREE.Box3().setFromObject(mesh);
+                    const center = box.getCenter(new THREE.Vector3());
+                    mesh.position.sub(center);
+                    
+                    scene.add(mesh);
+                    
+                    // Position camera
+                    camera.position.set(0, 0, 100);
+                    camera.lookAt(0, 0, 0);
+                    
+                    // Controls
+                    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    
+                    // Render loop
+                    function animate() {
+                        requestAnimationFrame(animate);
+                        controls.update();
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+                    
+                    status.innerHTML += 'Rendering started<br>';
+                },
+                function (progress) {
+                    status.innerHTML += 'Loading progress: ' + Math.round((progress.loaded / progress.total) * 100) + '%<br>';
+                },
+                function (error) {
+                    status.innerHTML += 'Error loading STL: ' + error + '<br>';
+                    console.error('STL loading error:', error);
+                }
+            );
+        } else {
+            status.innerHTML += 'Three.js or STLLoader not available<br>';
+        }
+    </script>
+</body>
+</html>

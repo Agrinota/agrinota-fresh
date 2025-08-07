@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota - Farm Intelligence Dashboard</title>
+    <link rel="stylesheet" href="demo-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="AGRINOTA FAVICON BIG.png" type="image/png" sizes="64x64">
+    <link rel="icon" href="AGRINOTA FAVICON BIG.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="AGRINOTA FAVICON BIG.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="AGRINOTA FAVICON BIG.png" sizes="180x180">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <img src="Agrinota Logo Clear.png" alt="Agrinota" class="logo-img">
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot active"></div>
+                <span>Simulated Demo</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Map Section -->
+            <div class="map-section">
+                <div class="map-container">
+                    <div id="map"></div>
+                    <div class="map-overlay">
+                        <div class="heatmap-grid"></div>
+                    </div>
+                    
+                </div>
+                
+                <!-- AI Button positioned in map area -->
+                <div class="floating-ai-btn" onclick="showModal()">
+                    <i class="fas fa-leaf"></i>
+                </div>
+            </div>
+
+            <!-- Tabs Section -->
+            <div class="tabs-section">
+                <div class="tabs-layout">
+                    <div class="tab-content-area">
+                        <div class="tabs-header">
+                            <h3>Sensor Data</h3>
+                        </div>
+                        <div class="tab-content">
+                    <div id="tab-A" class="tab-pane active">
+                        <div class="sensor-grid">
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-thermometer-half"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Temperature</h4>
+                                    <div class="sensor-value" id="temp-A">24.345°C</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-tint"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Humidity</h4>
+                                    <div class="sensor-value" id="humidity-A">65.234%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-water"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Soil Moisture (30cm)</h4>
+                                    <div class="sensor-value" id="moisture-30-A">42.567%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-water"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Soil Moisture (60cm)</h4>
+                                    <div class="sensor-value" id="moisture-60-A">38.123%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-water"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Soil Moisture (90cm)</h4>
+                                    <div class="sensor-value" id="moisture-90-A">35.789%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-wind"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Air Quality</h4>
+                                    <div class="sensor-value" id="air-quality-A">Good</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-smog"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Smoke Sensor</h4>
+                                    <div class="sensor-value" id="smoke-A">Clear</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Flame Sensor</h4>
+                                    <div class="sensor-value" id="flame-A">No Flame</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-battery-three-quarters"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Battery</h4>
+                                    <div class="sensor-value" id="battery-A">87.456%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="sensor-card">
+                                <div class="sensor-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="sensor-info">
+                                    <h4>Location</h4>
+                                    <div class="sensor-value" id="location-A">40.7128°N, 74.0060°W</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Additional tab panes will be generated dynamically -->
+                    
+                        </div>
+                    </div>
+                    
+                    <!-- Stake Selection Buttons -->
+                    <div class="tabs-controls">
+                        <div class="tabs-controls-header">
+                            <h4>Select Stake</h4>
+                        </div>
+                        <div id="stake-buttons">
+                            <!-- Buttons will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Modal -->
+        <div id="ai-insights-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-leaf"></i> AI Farm Intelligence</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="insight-content">
+                        <div class="overall-status">
+                            <div class="status-badge normal">
+                                <i class="fas fa-check-circle"></i>
+                                Normal Operations
+                            </div>
+                        </div>
+                        <div class="insight-text">
+                            <p><strong>Farm Health Summary:</strong> Your Agrinota sensor network is operating at optimal efficiency with all 6 stakes reporting normal conditions. Soil moisture levels are within healthy ranges across all depths, with Stake C showing slightly elevated moisture at 90cm depth (45.234%) which is beneficial for crop root development.</p>
+                            
+                            <p><strong>Environmental Conditions:</strong> Current temperature readings average 24.345°C with humidity at 65.234%, creating ideal growing conditions. Air quality remains excellent across all monitoring points, with no smoke or flame detection.</p>
+                            
+                            <p><strong>System Status:</strong> All sensor batteries are above 80% capacity, ensuring continuous monitoring. Stake E's battery is at 82.789% and will require attention within the next 2 weeks. The network is detecting no immediate threats to crop health or fire risks.</p>
+                            
+                            <p><strong>Recommendations:</strong> Continue current irrigation schedule. Consider soil aeration in the northwest quadrant where Stake B shows slightly compacted soil conditions. Schedule battery replacement for Stake E within 10 days.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="demo-script.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBC47FLZgvvSjNx4LDiqhFUwdOBhLyvA5k&libraries=visualization&callback=initMap"></script>
+</body>
+</html> 

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota - The Earth Speaks. We're Building the Translator.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'agrinota-green': '#0B6623',
+                        'agrinota-light': '#F0F4F2',
+                        'flame-orange': '#FF6B35',
+                        'earth-brown': '#8B4513',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #0B6623, 0 0 10px #0B6623, 0 0 15px #0B6623; }
+            to { box-shadow: 0 0 10px #0B6623, 0 0 20px #0B6623, 0 0 30px #0B6623; }
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0B6623, #228B22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(11, 102, 35, 0.1), rgba(34, 139, 34, 0.1)), 
+                        url('assets/california-wildfire-background-DmSk2ILX.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- Early Stage Banner -->
+    <div class="bg-agrinota-green text-white py-2 px-4 text-center text-sm animate-pulse-slow">
+        <span class="font-semibold">🚀 R&D Prototype</span> - Shipping Q4 2025 (estimated). Let's build it together.
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="Agrinota Logo Clear.png" alt="Agrinota Logo" class="h-8 w-auto mr-3" onerror="this.style.display='none'">
+                    <h1 class="text-2xl font-bold text-agrinota-green">Agrinota</h1>
+                    <span class="ml-2 text-xs text-gray-500 font-medium">Portuguese: "plant invoice" 🌱</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#how-it-works" class="text-gray-700 hover:text-agrinota-green transition-colors">How It Works</a>
+                    <a href="#device" class="text-gray-700 hover:text-agrinota-green transition-colors">Technology</a>
+                    <a href="#impact" class="text-gray-700 hover:text-agrinota-green transition-colors">Impact</a>
+                    <a href="#founder" class="text-gray-700 hover:text-agrinota-green transition-colors">Founder</a>
+                    <a href="#pilots" class="text-gray-700 hover:text-agrinota-green transition-colors">Pilots</a>
+                    <a href="demo.html" class="bg-agrinota-green text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors animate-glow">
+                        Live Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-32 px-4 hero-bg relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="max-w-7xl mx-auto text-center relative z-10">
+            <div class="animate-float">
+                <h1 class="text-7xl font-bold text-white mb-4 drop-shadow-2xl">
+                    the earth speaks.
+                </h1>
+                <h2 class="text-5xl font-bold gradient-text mb-12 drop-shadow-lg">
+                    we're building the translator.
+                </h2>
+            </div>
+            <p class="text-2xl text-white/90 mb-16 max-w-5xl mx-auto leading-relaxed drop-shadow-lg">
+                Agrinota's <strong>smart stakes</strong> create an urban forestry monitoring network, giving cities <strong>real-time data</strong> to respond faster to climate stress, droughts, and ecosystem collapse.
+            </p>
+            <div class="space-x-6">
+                <button onclick="scrollToWaitlist()" class="bg-agrinota-green text-white px-12 py-4 rounded-xl text-xl font-semibold hover:bg-green-700 transition-all shadow-2xl transform hover:scale-105 animate-glow">
+                    Join the Waitlist
+                </button>
+                <a href="#how-it-works" class="inline-block border-2 border-white text-white px-12 py-4 rounded-xl text-xl font-semibold hover:bg-white/10 transition-all shadow-2xl backdrop-blur-sm">
+                    See How It Works
+                </a>
+            </div>
+        </div>
+        <!-- Floating Animation Elements -->
+        <div class="absolute top-20 left-10 animate-float" style="animation-delay: 1s;">🌱</div>
+        <div class="absolute top-40 right-20 animate-float" style="animation-delay: 2s;">🍃</div>
+        <div class="absolute bottom-20 left-20 animate-float" style="animation-delay: 3s;">🌿</div>
+    </section>
+
+    <!-- Climate Urgency Impact Section -->
+    <section id="impact" class="py-24 bg-gradient-to-br from-red-50 to-orange-50 px-4 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-6xl font-bold text-gray-900 mb-6">Why Early Tree Intelligence Matters</h2>
+                <p class="text-2xl text-gray-700 max-w-4xl mx-auto font-medium">CLIMATE URGENCY</p>
+            </div>
+            
+            <!-- Crisis Statistics -->
+            <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-8 mb-16">
+                <div class="text-center bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+                    <div class="text-3xl font-bold text-flame-orange mb-2">36M</div>
+                    <p class="text-gray-700 text-sm">Mature trees lost by cities yearly</p>
+                </div>
+                <div class="text-center bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+                    <div class="text-3xl font-bold text-flame-orange mb-2">$19B</div>
+                    <p class="text-gray-700 text-sm">Annual U.S. power-line wildfire damage</p>
+                </div>
+                <div class="text-center bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+                    <div class="text-3xl font-bold text-flame-orange mb-2">7%</div>
+                    <p class="text-gray-700 text-sm">Crop losses rising per decade</p>
+                </div>
+                <div class="text-center bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+                    <div class="text-3xl font-bold text-agrinota-green mb-2">1°C</div>
+                    <p class="text-gray-700 text-sm">Cooler per 10% canopy gain</p>
+                </div>
+                <div class="text-center bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+                    <div class="text-3xl font-bold text-agrinota-green mb-2">90M</div>
+                    <p class="text-gray-700 text-sm">m³ stormwater diverted yearly</p>
+                </div>
+                <div class="text-center bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+                    <div class="text-3xl font-bold text-flame-orange mb-2">1 in 3</div>
+                    <p class="text-gray-700 text-sm">CA homes face wildfire risk</p>
+                </div>
+            </div>
+
+            <!-- Core Narrative -->
+            <div class="bg-white/90 backdrop-blur-sm p-12 rounded-2xl shadow-2xl max-w-5xl mx-auto">
+                <p class="text-xl text-gray-800 leading-relaxed mb-8">
+                    Cities lose 36 million mature trees a year—erasing shade, biodiversity, and billions in infrastructure protection. Agrinota began as a simple LoRa-powered garden sensor and is evolving into a <strong>preventive</strong> IoT network.
+                </p>
+                <p class="text-xl text-gray-800 leading-relaxed mb-8">
+                    Our stakes spot drought, heat stress, and humidity swings <strong>days before leaf damage shows</strong>. Next up: API-driven AI that flags disease-risk patterns and a LoRa-to-cell back-haul once funding unlocks.
+                </p>
+                <p class="text-xl text-gray-800 leading-relaxed font-semibold text-agrinota-green">
+                    We alert crews early—so parks, orchards, and city streets stay green and fire-resilient.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-24 bg-white px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-6xl font-bold text-gray-900 mb-6">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    Three simple steps to transform your urban forest into an intelligent monitoring network
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 text-white text-3xl font-bold group-hover:scale-110 transition-transform shadow-lg">
+                        1
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Deploy 🔧</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Install solar-powered smart stakes near trees and green infrastructure. Each device automatically connects to our secure network.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 text-white text-3xl font-bold group-hover:scale-110 transition-transform shadow-lg">
+                        2
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Monitor 📊</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Continuous data collection creates real-time maps of soil health, moisture levels, and environmental stress across your city.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="bg-gradient-to-br from-agrinota-green to-green-600 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 text-white text-3xl font-bold group-hover:scale-110 transition-transform shadow-lg">
+                        3
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">Respond ⚡</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Get instant alerts for drought stress, disease patterns, and climate threats. Take action before problems become crises.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Device Overview -->
+    <section id="device" class="py-24 bg-gray-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-6xl font-bold text-gray-900 mb-6">Solar-Powered IoT Stakes</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    Advanced ESP32-powered sensors that track soil moisture, humidity, light, and temperature — 24/7
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8">Core Hardware Specifications</h3>
+                    <div class="space-y-6 mb-8">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg text-agrinota-green">ESP32-S3 Core</h4>
+                            <p class="text-gray-600">Wi-Fi + BLE connectivity for seamless data transmission</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg text-agrinota-green">Capacitive Soil Probe + DS18B20</h4>
+                            <p class="text-gray-600">Multi-depth soil moisture and temperature monitoring</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg text-agrinota-green">BME280 Environmental Suite</h4>
+                            <p class="text-gray-600">Humidity, air temperature, and atmospheric pressure</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg text-agrinota-green">BH1750 Light Sensor</h4>
+                            <p class="text-gray-600">Ambient light lux measurement for photosynthesis tracking</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg text-agrinota-green">Sub-GHz LoRa Mesh</h4>
+                            <p class="text-gray-600">915/868 MHz long-range wireless communication</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h4 class="font-semibold text-lg text-agrinota-green">5W Solar + LiFePO₄</h4>
+                            <p class="text-gray-600">Multi-year battery life with solar charging</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-agrinota-green text-white p-6 rounded-xl">
+                        <h4 class="font-bold text-xl mb-3">AI Integration</h4>
+                        <p class="opacity-90">
+                            Edge readings stream to an AI layer that flags drought stress, heat islands, or disease. Data feeds an <strong>admin dashboard</strong> and a <strong>worker mobile app</strong>, guiding crews and cutting water/labor ≈ 40%.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="space-y-8">
+                    <div class="bg-gradient-to-br from-green-100 to-blue-100 h-80 rounded-xl flex items-center justify-center shadow-lg">
+                        <div class="text-center">
+                            <span class="text-8xl mb-4 block animate-pulse-slow">🌳</span>
+                            <p class="text-gray-600 text-lg">Interactive 3D Model</p>
+                            <p class="text-sm text-gray-500 mt-2">Hardware design may change as we validate components</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Urban Forest Stats -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h4 class="font-bold text-lg mb-4 text-gray-900">Urban Forest Crisis</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• San Francisco's urban canopy: <strong>≈13%</strong> (among lowest of major US cities)</li>
+                            <li>• NYC: <strong>≈600K</strong> street trees vs SF: <strong>125K</strong></li>
+                            <li>• California wildfires burned <strong>2M acres</strong> in 2023</li>
+                            <li>• Every <strong>5% canopy increase</strong> drops summer temps by <strong>2°C</strong></li>
+                        </ul>
+                        <p class="mt-4 text-agrinota-green font-semibold text-sm">
+                            "We're giving the trees a voice before the whisper turns to a crackle of flames."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive SF Map Section -->
+    <section class="py-24 bg-agrinota-green text-white px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-6">San Francisco Prototype Network</h2>
+            <p class="text-xl mb-12 opacity-90 max-w-3xl mx-auto">
+                Live sensor locations across the city providing real-time environmental intelligence
+            </p>
+            
+            <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">Presidio</h4>
+                        <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7989, -122.4662</p>
+                    <p class="text-xs mt-1 text-green-300">Status: OK</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">Golden Gate</h4>
+                        <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7694, -122.4862</p>
+                    <p class="text-xs mt-1 text-green-300">Status: OK</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">Balboa Park</h4>
+                        <span class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7213, -122.4475</p>
+                    <p class="text-xs mt-1 text-yellow-300">Status: Warning</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">Mission</h4>
+                        <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7599, -122.4148</p>
+                    <p class="text-xs mt-1 text-green-300">Status: OK</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">Bayview</h4>
+                        <span class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7294, -122.3929</p>
+                    <p class="text-xs mt-1 text-red-300">Status: Critical</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">Lake Merced</h4>
+                        <span class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7285, -122.4937</p>
+                    <p class="text-xs mt-1 text-green-300">Status: OK</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold">China Beach</h4>
+                        <span class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></span>
+                    </div>
+                    <p class="text-sm opacity-80">37.7880, -122.4835</p>
+                    <p class="text-xs mt-1 text-yellow-300">Status: Warning</p>
+                </div>
+            </div>
+            
+            <a href="demo.html" class="inline-block bg-white text-agrinota-green px-10 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                View Live Dashboard →
+            </a>
+        </div>
+    </section>
+
+    <!-- Founder Story Section -->
+    <section id="founder" class="py-24 bg-white px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-6xl font-bold text-gray-900 mb-6">Meet the Founder</h2>
+            </div>
+            
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                <div class="text-center md:text-left order-2 md:order-1">
+                    <h3 class="text-4xl font-bold text-gray-900 mb-2">Aqsa Choudry</h3>
+                    <p class="text-xl text-agrinota-green mb-6 font-semibold">Founder & CEO, Agrinota</p>
+                    <p class="text-lg text-gray-600 mb-6">Mechanical Engineering Technology student at Farmingdale State College</p>
+                    
+                    <!-- Personal Quote -->
+                    <blockquote class="bg-agrinota-light p-8 rounded-xl mb-8 border-l-4 border-agrinota-green">
+                        <p class="text-lg text-gray-800 italic leading-relaxed">
+                            "Ever since I was a child, I was always fascinated by how <strong>technology</strong> could actually <strong>change lives</strong>. Not just in terms of improvements, but from mitigating or even eliminating crises before they begin. That's why I founded Agrinota—to give the earth a <strong>voice</strong> and help us listen before it's too late."
+                        </p>
+                    </blockquote>
+                    
+                    <!-- Expertise Areas -->
+                    <div class="grid md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border">
+                            <h4 class="font-semibold text-agrinota-green text-sm">Environmental Tech</h4>
+                            <p class="text-xs text-gray-600">IoT sensors for environmental monitoring</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border">
+                            <h4 class="font-semibold text-agrinota-green text-sm">Climate Innovation</h4>
+                            <p class="text-xs text-gray-600">Real-time climate data solutions</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border">
+                            <h4 class="font-semibold text-agrinota-green text-sm">IoT Solutions</h4>
+                            <p class="text-xs text-gray-600">Smart sensors for urban forestry</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 mb-8">
+                        <p class="text-gray-600"><span class="font-semibold">Location:</span> San Francisco, CA</p>
+                        <p class="text-gray-600"><span class="font-semibold">Email:</span> team@agrinota.org</p>
+                        <div class="flex space-x-4 justify-center md:justify-start mt-6">
+                            <a href="https://twitter.com/AqsaChoudryfrfr" class="text-agrinota-green hover:text-green-700 font-semibold transition-colors" target="_blank">@AqsaChoudryfrfr</a>
+                            <a href="https://linkedin.com/in/aqsa-choudry-434a67245" class="text-agrinota-green hover:text-green-700 font-semibold transition-colors" target="_blank">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-1 md:order-2 flex justify-center">
+                    <div class="relative">
+                        <img src="Aqsa Professional Headshot Circular.png" alt="Aqsa Choudry - Founder" class="w-80 h-80 rounded-full shadow-2xl animate-glow" onerror="this.src='placeholder.svg'">
+                        <!-- Floating decorative elements -->
+                        <div class="absolute -top-5 -right-5 animate-float" style="animation-delay: 1s;">🍃</div>
+                        <div class="absolute -bottom-5 -left-5 animate-float" style="animation-delay: 2s;">🌱</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pilot Program Section -->
+    <section id="pilots" class="py-24 bg-gray-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-6xl font-bold text-gray-900 mb-6">Join Our Pilot Program</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    We're lining up a small group of forward-thinking park districts, cities, utilities, and land-steward nonprofits across California
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8">Program Details</h3>
+                    <div class="space-y-6 mb-8">
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">•</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Pilot Cohort</h4>
+                                <p class="text-gray-600"><strong>3–5</strong> sites (50–250 stakes each)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">•</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">What We Provide</h4>
+                                <p class="text-gray-600">Hardware, install support & dashboard <strong>free of charge</strong></p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">•</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Partnership</h4>
+                                <p class="text-gray-600">Partners share data + feedback to shape v1 launch</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">•</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Coverage Area</h4>
+                                <p class="text-gray-600">SF Bay Area, Silicon Valley, greater California, and neighboring states</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-agrinota-green text-white p-6 rounded-xl">
+                        <h4 class="font-bold text-xl mb-3">Ideal Partners</h4>
+                        <p class="opacity-90 mb-4">
+                            If you manage green infrastructure and want early access to cutting-edge environmental monitoring, we'd love to talk.
+                        </p>
+                        <button onclick="window.open('mailto:founder@agrinota.com?subject=Pilot Program Interest', '_blank')" 
+                                class="bg-white text-agrinota-green px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            Request the Pilot Deck →
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h4 class="font-bold text-lg mb-4 text-agrinota-green">Target Partners</h4>
+                        <ul class="space-y-3 text-gray-600">
+                            <li>🌳 Park Districts</li>
+                            <li>🏛️ City Governments</li>
+                            <li>⚡ Utility Companies</li>
+                            <li>🌍 Environmental Nonprofits</li>
+                            <li>🏫 Research Universities</li>
+                            <li>🌾 Agricultural Operations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h4 class="font-bold text-lg mb-4 text-agrinota-green">What You Get</h4>
+                        <ul class="space-y-3 text-gray-600">
+                            <li>✓ Free hardware deployment</li>
+                            <li>✓ Professional installation support</li>
+                            <li>✓ Real-time monitoring dashboard</li>
+                            <li>✓ AI-powered insights</li>
+                            <li>✓ Mobile worker app</li>
+                            <li>✓ Priority support & updates</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist Section -->
+    <section class="py-24 bg-agrinota-green text-white px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-6xl font-bold mb-6">Ready to Transform Forestry?</h2>
+            <p class="text-xl mb-8 opacity-90">
+                We're raising a $500k pre-seed to build 50 pilot stakes, harden the firmware, and launch beta dashboards.
+            </p>
+            
+            <div class="bg-white/10 backdrop-blur-sm p-8 rounded-xl mb-12">
+                <h3 class="text-2xl font-bold mb-6">Early Access Benefits</h3>
+                <div class="grid md:grid-cols-2 gap-6 text-left">
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-3">🚀</span>
+                        <div>
+                            <h4 class="font-semibold">Priority Pilot Access</h4>
+                            <p class="text-sm opacity-80">First in line for beta deployments</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-3">🧠</span>
+                        <div>
+                            <h4 class="font-semibold">Climate Intelligence</h4>
+                            <p class="text-sm opacity-80">Exclusive environmental insights</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-3">📈</span>
+                        <div>
+                            <h4 class="font-semibold">Product Updates</h4>
+                            <p class="text-sm opacity-80">Quarterly progress reports</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-3">🔐</span>
+                        <div>
+                            <h4 class="font-semibold">No Spam Promise</h4>
+                            <p class="text-sm opacity-80">Unsubscribe anytime</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <form class="max-w-md mx-auto" onsubmit="handleWaitlistSubmit(event)">
+                <div class="mb-6">
+                    <input type="email" placeholder="Enter your email address" required 
+                           class="w-full px-6 py-4 rounded-lg text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-30">
+                </div>
+                <button type="submit" class="w-full bg-white text-agrinota-green px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all shadow-lg transform hover:scale-105">
+                    Join the Movement →
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Funding CTA -->
+    <section class="py-24 bg-white px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-6xl font-bold text-gray-900 mb-6">Fuel the Future of Forestry</h2>
+            <p class="text-xl text-gray-600 mb-12">
+                We're raising a $500k pre-seed round to harden our firmware, scale low-cost stake manufacturing, and launch beta dashboards + pilot networks.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">Investment Terms</h3>
+                    <ul class="space-y-3 text-left text-gray-600">
+                        <li>• Convertible SAFE @ $4M cap</li>
+                        <li>• Grants & climate-adaptation funds welcome</li>
+                        <li>• Target hardware cost < $250 per stake</li>
+                        <li>• Pilot slots open across California</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-agrinota-light p-8 rounded-xl">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-900">What We're Building</h3>
+                    <ul class="space-y-3 text-left text-gray-600">
+                        <li>• 50 pilot stakes deployment</li>
+                        <li>• Hardened firmware v1.0</li>
+                        <li>• Beta admin dashboard</li>
+                        <li>• Mobile worker app</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="space-x-4">
+                <button onclick="window.open('mailto:founder@agrinota.com?subject=Investment Deck Request', '_blank')" 
+                        class="bg-agrinota-green text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg">
+                    Request Investment Deck
+                </button>
+                <button onclick="window.open('mailto:founder@agrinota.com?subject=Partnership Opportunity', '_blank')"
+                        class="border-2 border-agrinota-green text-agrinota-green px-10 py-4 rounded-lg text-lg font-semibold hover:bg-agrinota-light transition-colors">
+                    Partnership Opportunities
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="Agrinota Logo Clear.png" alt="Agrinota Logo" class="h-8 w-auto mr-3" onerror="this.style.display='none'">
+                        <h3 class="text-2xl font-bold">Agrinota</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Building the next generation of environmental intelligence — turning passive urban forests into active sensor networks.</p>
+                    <p class="text-sm text-gray-500">"the earth speaks. we're building the translator."</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#device" class="hover:text-white transition-colors">Smart Stakes</a></li>
+                        <li><a href="demo.html" class="hover:text-white transition-colors">Live Dashboard</a></li>
+                        <li><a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a></li>
+                        <li><a href="#pilots" class="hover:text-white transition-colors">Pilot Program</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#founder" class="hover:text-white transition-colors">Founder Story</a></li>
+                        <li><a href="#impact" class="hover:text-white transition-colors">Climate Impact</a></li>
+                        <li><a href="mailto:team@agrinota.org" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="mailto:founder@agrinota.com" class="hover:text-white transition-colors">Investors</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://twitter.com/AqsaChoudryfrfr" class="hover:text-white transition-colors" target="_blank">Twitter</a></li>
+                        <li><a href="https://linkedin.com/in/aqsa-choudry-434a67245" class="hover:text-white transition-colors" target="_blank">LinkedIn</a></li>
+                        <li><a href="mailto:team@agrinota.org" class="hover:text-white transition-colors">team@agrinota.org</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Agrinota. All rights reserved. | San Francisco, CA | Mechanical Engineering Technology, Farmingdale State College</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToWaitlist() {
+            document.querySelector('section:has(form)').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleWaitlistSubmit(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            alert(`Thank you! Welcome to the movement. We'll be in touch soon at ${email}`);
+            event.target.reset();
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota – The Earth Speaks. We're Building the Guardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=League+Spartan:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Three.js for 3D Model - Using older compatible version -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'spartan': ['League Spartan', 'sans-serif'],
+                    },
+                    colors: {
+                        'agrinota-green': '#0B6623',
+                        'agrinota-light': '#F0F4F2',
+                        'flame-orange': '#FF6B35',
+                        'wildfire-red': '#0B6623',
+                        'earth-brown': '#8B4513',
+                    },
+                    spacing: {
+                        '18': '4.5rem',
+                        '22': '5.5rem',
+                        '26': '6.5rem',
+                        '30': '7.5rem',
+                        '34': '8.5rem',
+                        '38': '9.5rem',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'alert': 'alert 1s ease-in-out infinite alternate',
+                        'sensor-float': 'sensorFloat 8s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #0B6623, 0 0 10px #0B6623, 0 0 15px #0B6623; }
+            to { box-shadow: 0 0 10px #0B6623, 0 0 20px #0B6623, 0 0 30px #0B6623; }
+        }
+        @keyframes alert {
+            from { box-shadow: 0 0 5px #0B6623, 0 0 10px #0B6623, 0 0 15px #0B6623; }
+            to { box-shadow: 0 0 10px #0B6623, 0 0 20px #0B6623, 0 0 30px #0B6623; }
+        }
+        @keyframes sensorFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(var(--rotation, 0deg));
+                opacity: 0.8;
+            }
+            25% { 
+                transform: translateY(-20px) rotate(calc(var(--rotation, 0deg) + 10deg));
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-10px) rotate(calc(var(--rotation, 0deg) - 5deg));
+                opacity: 0.9;
+            }
+            75% { 
+                transform: translateY(-25px) rotate(calc(var(--rotation, 0deg) + 15deg));
+                opacity: 1;
+            }
+        }
+        .sensor-float {
+            animation: sensorFloat 8s ease-in-out infinite;
+        }
+        .sensor-chip {
+            transition: all 0.3s ease;
+        }
+        .sensor-chip:hover {
+            transform: scale(1.2) !important;
+            z-index: 10;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0B6623, #228B22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-bg {
+            position: relative;
+            min-height: 80vh;
+            background: linear-gradient(45deg, 
+                #220000 0%, 
+                #440000 8%, 
+                #660000 16%, 
+                #880000 24%, 
+                #AA0000 32%, 
+                #CC0000 40%, 
+                #DD0000 48%, 
+                #BB0000 56%, 
+                #990000 64%, 
+                #770000 72%, 
+                #550000 80%, 
+                #330000 88%, 
+                #110000 96%, 
+                #220000 100%);
+            background-size: 400% 400%;
+            animation: fire-flicker 8s ease-in-out infinite;
+        }
+        .hero-title {
+            font-family: 'League Spartan', sans-serif;
+            font-weight: 700;
+            font-size: clamp(3rem, 8vw, 8rem);
+            line-height: 0.9;
+            text-align: center;
+            color: transparent;
+            background: linear-gradient(45deg, #ff4444, #ffffff, #ff6666, #ffaaaa);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: text-fire-glow 6s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+        @keyframes text-fire-glow {
+            0%, 100% { 
+                background-position: 0% 50%;
+                filter: brightness(1);
+            }
+            50% { 
+                background-position: 100% 50%;
+                filter: brightness(1.2);
+            }
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(40, 40, 40, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 60%, rgba(60, 60, 60, 0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 40% 40%, rgba(30, 30, 30, 0.4) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 90%, rgba(50, 50, 50, 0.25) 0%, transparent 70%);
+            z-index: 3;
+            animation: smoke-drift 12s ease-in-out infinite;
+        }
+        @keyframes fire-flicker {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        @keyframes smoke-drift {
+            0%, 100% { 
+                transform: translateX(0) translateY(0) scale(1);
+                opacity: 0.6;
+            }
+            25% {
+                transform: translateX(10px) translateY(-5px) scale(1.05);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateX(-5px) translateY(-10px) scale(1.1);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translateX(15px) translateY(-3px) scale(0.95);
+                opacity: 0.7;
+            }
+        }
+
+    </style>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="min-h-screen bg-white font-inter">
+    <!-- Banner -->
+    <div class="bg-wildfire-red text-white py-2 px-4 text-center text-sm animate-alert">
+        <span class="font-semibold"><svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>Early Access Available</span> — Partner with us to protect your land.
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="Agrinota Logo Clear.png" alt="Agrinota Logo" class="h-8 w-auto" onerror="this.style.display='none'">
+                </div>
+                <div class="hidden lg:flex items-center space-x-4 xl:space-x-6">
+                    <a href="#impact" class="text-gray-700 hover:text-wildfire-red transition-colors text-sm">Impact</a>
+                    <a href="#how-it-works" class="text-gray-700 hover:text-wildfire-red transition-colors text-sm">How It Works</a>
+                    <a href="#technology" class="text-gray-700 hover:text-wildfire-red transition-colors text-sm">Technology</a>
+                    <a href="#founder" class="text-gray-700 hover:text-wildfire-red transition-colors text-sm">Founder</a>
+                    <a href="#partnerships" class="text-gray-700 hover:text-wildfire-red transition-colors text-sm">Partnerships</a>
+                    <a href="pilot-contact.html" class="bg-wildfire-red text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-all shadow-md hover:shadow-lg transform hover:scale-105 text-sm">
+                        Early Pilot Program
+                    </a>
+                    <a href="#contact" class="text-gray-700 hover:text-wildfire-red transition-colors text-sm">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-24 md:py-32 px-6 hero-bg relative overflow-hidden flex items-center">
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <h1 class="hero-title">
+                Sparks don't wait.<br>
+                Why should we?
+            </h1>
+            <p class="text-base md:text-lg text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
+                Agrinota's solar-powered smart stakes create a low-latency mesh that senses the earliest signs of wildfire, such as heat, smoke, and flame signatures, then forwards validated alerts to local fire dispatch and emergency management systems while delivering early warnings to nearby residents, all within moments.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="pilot-contact.html" class="bg-wildfire-red text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 inline-block">
+                    Join Early Pilot Program
+                </a>
+                <a href="#how-it-works" class="border border-white text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors">
+                    See How It Works
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Is Agrinota Section -->
+    <section class="py-16 md:py-24 bg-white px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight flex items-center justify-center">
+                    <span class="text-gray-600 font-light mr-3">What Is</span>
+                    <img src="Agrinota Logo Clear.png" alt="Agrinota" class="h-12 md:h-16 w-auto inline-block" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline'">
+                    <span style="display:none">Agrinota</span>
+                    <span class="text-gray-600 font-light ml-3">?</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8 font-light">
+                    Imagine pressing a simple stake into the ground and having a guardian that continuously watches for wildfire threats to your community.
+                </p>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
+                    That's Agrinota. One solar-powered stake monitors its patch of land. Hundreds link together to create an intelligent early warning network that gives firefighters the advantage they need.
+                </p>
+                
+                <!-- 3D Stake Model -->
+                <div class="mt-12 mb-8">
+                    <div id="stake-3d-container" class="w-full h-64 md:h-80 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 shadow-inner flex items-center justify-center overflow-hidden">
+                        <div id="stake-loading" class="text-gray-500 text-sm">Loading 3D model...</div>
+                    </div>
+                    <div class="text-center mt-4 space-y-1">
+                        <p class="text-sm text-gray-600 font-medium">Explore the Agrinota Stake</p>
+                        <p class="text-xs text-gray-500">Drag to rotate • Scroll to zoom</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Guardian Capabilities -->
+            <div class="bg-gray-50 rounded-3xl p-8 md:p-12 mb-12">
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-medium text-gray-900 mb-8">The Guardian's Senses</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                <p class="font-light text-gray-700 text-lg"><strong>Soil sensors</strong> detect dangerous heat and dryness underground—the first signs of fire conditions.</p>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                <p class="font-light text-gray-700 text-lg"><strong>Air quality monitors</strong> smell smoke particles before humans can, while thermal sensors spot heat signatures.</p>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <p class="font-light text-gray-700 text-lg"><strong>Smart optics</strong> distinguish between harmless sunlight and the telltale glow of flames.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-medium text-gray-900 mb-8">From Data to Action</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <p class="font-light text-gray-700 text-lg"><strong>Real-time analysis:</strong> Each stake processes sensor data every 2 seconds, calculating fire risk with AI algorithms.</p>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                <p class="font-light text-gray-700 text-lg"><strong>Smart context:</strong> Local readings combine with weather data and satellite fire feeds for accuracy.</p>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
+                                <p class="font-light text-gray-700 text-lg"><strong>Instant alerts:</strong> Critical warnings travel via mesh radio—no cell towers needed—directly to emergency teams.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-wildfire-red text-white p-8 md:p-10 rounded-3xl">
+                <h3 class="text-xl md:text-2xl font-medium mb-6 text-center">When Fire Risk is Detected, Agrinota Acts Instantly:</h3>
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z"/>
+                                <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold mb-2">Agency Dispatch</h4>
+                        <p class="font-light text-sm">Alerts fire departments, forest service, and emergency agencies with precise GPS coordinates</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57-.35-.11-.74-.03-1.02.24l-2.2 2.2c-2.83-1.44-5.15-3.75-6.59-6.59l2.2-2.2c.27-.27.35-.67.24-1.02C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/>
+                                <path d="M19 12h2C21 6.48 16.52 2 11 2v2c4.42 0 8 3.58 8 8z"/>
+                                <path d="M15 12h2c0-2.76-2.24-5-5-5v2c1.66 0 3 1.34 3 3z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold mb-2">Emergency Broadcasting</h4>
+                        <p class="font-light text-sm">Mass evacuation warnings via government Emergency Alert System (EAS) - similar to AMBER Alerts</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM13 17h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold mb-2">Critical Early Warning</h4>
+                        <p class="font-light text-sm">Enables rapid containment and evacuation coordination - giving fire departments crucial response time</p>
+                    </div>
+                </div>
+                <div class="bg-black/20 rounded-2xl p-6 text-center">
+                    <p class="text-lg mb-4">
+                        <strong>The key advantage:</strong> Even if power lines fail and cell towers burn, Agrinota's solar-powered mesh network keeps working—giving everyone the precious seconds that save lives and property.
+                    </p>
+                    <div class="inline-block bg-white/20 px-6 py-2 rounded-full">
+                        <span class="text-sm font-medium flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(90 12 12)"/>
+                            </svg>
+                            See it in action below
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section class="py-16 md:py-24 bg-gray-50 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">See Guardian in Action</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
+                    Experience our live dashboard showing real-time data from deployed Guardian stakes. Click on any stake to explore its sensor readings.
+                </p>
+            </div>
+            
+            <!-- Integrated Dashboard -->
+            <div class="bg-white rounded-3xl p-12 shadow-xl">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl font-bold text-gray-900 mb-6 tracking-tight">Live Guardian Dashboard</h3>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-light mb-6">
+                        Experience our real-time monitoring system in action. Click on any Guardian stake to explore detailed sensor readings, environmental conditions, and fire risk assessments. This is the actual dashboard that firefighters and land managers use to monitor their protected areas.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4 text-sm text-agrinota-green font-medium">
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-agrinota-green rounded-full"></div>
+                            Interactive Map
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-agrinota-green rounded-full"></div>
+                            Real-time Sensor Data
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-agrinota-green rounded-full"></div>
+                            Heat Map Visualization
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-agrinota-green rounded-full"></div>
+                            AI Fire Detection
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Live Demo Dashboard -->
+                <div class="dashboard-container rounded-2xl overflow-hidden shadow-2xl border-2 border-agrinota-green/20 bg-gradient-to-b from-white to-gray-50">
+                    <iframe 
+                        src="demo.html" 
+                        width="100%" 
+                        height="1200" 
+                        frameborder="0"
+                        style="display: block; border: none; border-radius: 1rem; background: white;"
+                        title="Agrinota Guardian Dashboard Demo"
+                        scrolling="yes">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="py-16 md:py-24 bg-gradient-to-br from-green-50 to-green-100 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Impact — Why Seconds Matter</h2>
+            </div>
+            
+            <!-- Crisis Statistics -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="text-center bg-white/90 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-3xl md:text-4xl font-light text-wildfire-red mb-2">$275B</div>
+                    <p class="text-sm text-gray-600 font-light">projected cost of 2025 LA fires - most expensive disaster in U.S. history</p>
+                </div>
+                <div class="text-center bg-white/90 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-3xl md:text-4xl font-light text-wildfire-red mb-2">14 mph</div>
+                    <p class="text-sm text-gray-600 font-light">wildfire spread speed - faster than most people can run</p>
+                </div>
+                <div class="text-center bg-white/90 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-3xl md:text-4xl font-light text-wildfire-red mb-2">98%</div>
+                    <p class="text-sm text-gray-600 font-light">success rate when fires caught in first 24 hours vs. 2% after escape</p>
+                </div>
+                <div class="text-center bg-white/90 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-3xl md:text-4xl font-light text-agrinota-green mb-2">18 sec</div>
+                    <p class="text-sm text-gray-600 font-light">detection interval - 1,000x more sensitive than home smoke alarms</p>
+                </div>
+            </div>
+            
+            <!-- Additional Impact Stats -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+                <div class="bg-gradient-to-br from-red-100 to-red-200 p-8 rounded-2xl border-2 border-red-300 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-red-700 mb-4">29</div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Lives Lost</h3>
+                        <p class="text-sm text-gray-700">in January 2025 LA fires alone - showing the human cost of delayed detection</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-orange-100 to-yellow-100 p-8 rounded-2xl border-2 border-orange-300 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-flame-orange mb-4">18K</div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Structures Destroyed</h3>
+                        <p class="text-sm text-gray-700">in 2025 LA fires - entire neighborhoods erased in hours</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-green-100 to-emerald-100 p-8 rounded-2xl border-2 border-green-300 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-agrinota-green mb-4">25</div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Acre Threshold</h3>
+                        <p class="text-sm text-gray-700">fires contained under 25 acres have 98% success rates - every second counts</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Message -->
+            <div class="bg-gradient-to-br from-white to-red-50 p-8 md:p-12 rounded-3xl max-w-5xl mx-auto border-2 border-red-100 shadow-xl">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">The Critical Window is Closing</h3>
+                    <p class="text-lg md:text-xl text-gray-700 leading-relaxed font-light mb-6">
+                        <strong class="text-wildfire-red">Right now</strong>, a fire starting as small as a campfire has a <strong>98% chance of containment</strong> if detected within 24 hours. 
+                        Wait just one day longer, and that success rate plummets to <strong>2%</strong>.
+                    </p>
+                    <p class="text-lg md:text-xl text-gray-700 leading-relaxed font-light">
+                        The 2025 Los Angeles fires prove what happens when we're too late: <strong class="text-wildfire-red">29 lives lost, 18,000 structures destroyed, $275 billion in damage</strong> — 
+                        all from fires that could have been contained at 25 acres with early detection.
+                    </p>
+                </div>
+                
+                <div class="bg-gradient-to-r from-wildfire-red to-red-600 text-white p-6 rounded-xl text-center">
+                    <p class="text-xl font-semibold mb-2">Every Guardian stake deployed could prevent the next megafire.</p>
+                    <p class="text-lg font-light opacity-90">Because when wildfire spreads at 14 mph, seconds literally save lives.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 md:py-24 bg-white px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">How It Works</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="text-center group">
+                    <div class="gradient-icon-container bg-gradient-to-br from-agrinota-green to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white group-hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zM12 6.5L19.5 19H4.5L12 6.5z"/>
+                            <circle cx="12" cy="15" r="1.5"/>
+                            <path d="M12 8v5"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-medium mb-3">Deploy</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Twist‑in solar stakes create self‑meshing networks without cellular infrastructure.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="gradient-icon-container bg-gradient-to-br from-yellow-500 to-yellow-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white group-hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10S2 17.514 2 12 6.486 2 12 2zm0 2C7.589 4 4 7.589 4 12s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 5v4M19 12h-4M12 15v4M9 12H5"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-medium mb-3">Detect</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Multi‑sensor arrays sample environmental conditions hourly using advanced algorithms.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="gradient-icon-container bg-gradient-to-br from-red-500 to-red-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white group-hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L8 6v6H6l4 4 4-4h-2V6l-4-4z"/>
+                            <path d="M4 18h16v2H4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-medium mb-3">Dispatch</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Instantly alerts CAL FIRE, National Park Service fire teams, local fire departments, and emergency management agencies with precise GPS coordinates.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Technology Snapshot -->
+    <section id="technology" class="py-24 bg-gray-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Technology Snapshot</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    A deep dive into the Guardian stake's modular architecture and cutting-edge sensor fusion
+                </p>
+            </div>
+            
+            <!-- Main Technology Description -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-16">
+                <div class="grid md:grid-cols-3 gap-8 items-center">
+                    <!-- Technology Text -->
+                    <div class="md:col-span-2">
+                        <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                    <p class="text-xl mb-8 text-gray-800 font-medium">
+                        Guardian stakes operate through a sophisticated <strong>three-tier intelligence architecture</strong> that combines 
+                        edge computing, cloud-based algorithms, and AI-driven anomaly detection to deliver rapid, accurate 
+                        wildfire risk assessment.
+                    </p>
+                    
+                    <p class="text-lg mb-8">
+                        At the <strong>hardware level</strong>, each ESP32-powered stake samples multiple environmental sensors 
+                        hourly, with <strong>real-time event detection</strong> for immediate threats. 
+                        Raw sensor data from BME280 environmental sensors, soil moisture probes, and TSL2591 light detectors 
+                        is filtered and normalized using <strong>top-down API calls</strong> that aggregate readings across 
+                        the mesh network.
+                    </p>
+                    
+                    <p class="text-lg mb-8">
+                        The processed data flows to our <strong>cloud-based analytics engine</strong>, where machine learning 
+                        algorithms analyze multi-dimensional sensor patterns, environmental trends, and historical fire data. 
+                        When anomalies are detected, the system automatically triggers calls to a <strong>specialized backend 
+                        agent</strong> that performs qualitative risk assessment using contextual environmental data, 
+                        weather patterns, and regional fire behavior models.
+                    </p>
+                    
+                            <div class="bg-gradient-to-r from-agrinota-green to-green-600 text-white p-6 rounded-lg mb-8">
+                                <p class="text-lg font-medium">
+                                    <strong>The result:</strong> A self-learning network that reduces false positives by 90% 
+                                    while delivering actionable intelligence within minutes, not hours.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Component Carousel -->
+                    <div class="md:col-span-1">
+                        <div class="relative bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 h-96 overflow-hidden border border-gray-200 shadow-lg">
+                            <!-- Carousel Container -->
+                            <div class="carousel-container h-full relative">
+                                <div class="carousel-track flex transition-transform duration-500 ease-in-out h-full" id="carousel-track">
+                                    <!-- ESP32 Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <div class="w-16 h-10 bg-blue-600 rounded-sm mb-1 mx-auto shadow-sm"></div>
+                                                <div class="flex justify-center space-x-1">
+                                                    <div class="w-0.5 h-4 bg-yellow-400 rounded-full"></div>
+                                                    <div class="w-0.5 h-4 bg-yellow-400 rounded-full"></div>
+                                                    <div class="w-0.5 h-4 bg-yellow-400 rounded-full"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">ESP32 Microcontroller</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">Wi-Fi/Bluetooth enabled MCU with dual-core processing</p>
+                                    </div>
+
+                                    <!-- BME280 Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-red-100 to-pink-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <div class="w-12 h-8 bg-red-500 rounded-sm mb-1 mx-auto shadow-sm"></div>
+                                                <div class="w-2 h-2 bg-gray-800 rounded-sm mx-auto mb-0.5"></div>
+                                                <div class="w-1.5 h-0.5 bg-yellow-400 rounded-full mx-auto"></div>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">BME280 Sensor</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">Precision temperature, humidity & pressure monitoring</p>
+                                    </div>
+
+                                    <!-- 18650 Battery Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-green-100 to-emerald-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <div class="w-6 h-20 bg-green-600 rounded-full mx-auto shadow-sm relative">
+                                                    <div class="w-1.5 h-0.5 bg-yellow-400 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-0.5"></div>
+                                                    <div class="absolute inset-0 flex items-center justify-center">
+                                                        <div class="w-4 h-0.5 bg-white rounded-full opacity-60"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">18650 Li-Ion Battery</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">High-capacity rechargeable power cell</p>
+                                    </div>
+
+                                    <!-- Solar Panel Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-indigo-100 to-blue-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <div class="w-16 h-12 bg-indigo-800 rounded-sm mx-auto shadow-sm grid grid-cols-4 gap-0.5 p-0.5">
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                    <div class="bg-indigo-600 rounded-xs"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">Solar Panels</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">Multiple mini panels for continuous power</p>
+                                    </div>
+
+                                    <!-- Soil Probe Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <div class="w-1.5 h-16 bg-yellow-600 rounded-full mx-auto shadow-sm"></div>
+                                                <div class="w-3 h-1.5 bg-gray-700 rounded-sm mx-auto mt-0.5"></div>
+                                                <div class="w-0.5 h-2 bg-red-500 mx-auto"></div>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">Soil Moisture Probes</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">Multi-depth soil condition monitoring</p>
+                                    </div>
+
+                                    <!-- Light Sensor Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-orange-100 to-yellow-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <div class="w-12 h-8 bg-orange-500 rounded-sm mx-auto shadow-sm mb-0.5"></div>
+                                                <div class="w-4 h-4 bg-gray-800 rounded-sm mx-auto mb-0.5"></div>
+                                                <div class="w-3 h-1 bg-white rounded-sm mx-auto opacity-60"></div>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">TSL2591 Light Sensors</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">High-dynamic range ambient light detection</p>
+                                    </div>
+
+                                    <!-- And Many More Slide -->
+                                    <div class="carousel-slide w-full flex-shrink-0 flex flex-col items-center justify-center p-4">
+                                        <div class="w-28 h-28 bg-gradient-to-br from-purple-100 to-violet-200 rounded-xl flex items-center justify-center mb-3 shadow-md">
+                                            <div class="text-center">
+                                                <!-- Random squiggly shapes -->
+                                                <svg class="w-20 h-20" viewBox="0 0 80 80" fill="none">
+                                                    <!-- Squiggly line 1 -->
+                                                    <path d="M10 20 Q20 10, 30 20 T50 20" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+                                                    <!-- Squiggly line 2 -->
+                                                    <path d="M15 35 Q25 25, 35 35 T55 35" stroke="#a855f7" stroke-width="1.5" fill="none"/>
+                                                    <!-- Squiggly line 3 -->
+                                                    <path d="M20 50 Q30 40, 40 50 T60 50" stroke="#9333ea" stroke-width="2" fill="none"/>
+                                                    <!-- Small circles -->
+                                                    <circle cx="65" cy="25" r="2" fill="#8b5cf6"/>
+                                                    <circle cx="70" cy="45" r="1.5" fill="#a855f7"/>
+                                                    <circle cx="15" cy="60" r="1.5" fill="#9333ea"/>
+                                                    <!-- Wavy shapes -->
+                                                    <path d="M5 65 Q15 60, 25 65 Q35 70, 45 65" stroke="#7c3aed" stroke-width="1.5" fill="none"/>
+                                                    <path d="M50 15 Q55 10, 60 15 Q65 20, 70 15" stroke="#8b5cf6" stroke-width="1.5" fill="none"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <h3 class="text-base font-semibold text-gray-800 mb-1">And Many More!</h3>
+                                        <p class="text-xs text-gray-600 text-center px-2">Additional sensors and components for comprehensive monitoring</p>
+                                    </div>
+                                </div>
+
+                                <!-- Navigation Dots -->
+                                <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-400 active" data-slide="0"></button>
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-300" data-slide="1"></button>
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-300" data-slide="2"></button>
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-300" data-slide="3"></button>
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-300" data-slide="4"></button>
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-300" data-slide="5"></button>
+                                    <button class="carousel-dot w-2 h-2 rounded-full bg-gray-300" data-slide="6"></button>
+                                </div>
+
+                                <!-- Navigation Arrows -->
+                                <button class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-md" id="carousel-prev">
+                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-md" id="carousel-next">
+                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Specifications Grid -->
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <!-- Sensor Array -->
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Sensor Array</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><strong>3x Soil Moisture:</strong> Multi-depth probes (30cm, 60cm, 90cm)</li>
+                        <li><strong>4x TSL2591 Light Sensors:</strong> 360° canopy monitoring</li>
+                        <li><strong>ESP32-Cam + IR Sensor:</strong> Visual & thermal imaging with anomaly detection</li>
+                        <li><strong>DHT22/BME-280:</strong> Temperature & humidity</li>
+                        <li><strong>Air Quality:</strong> Smoke & particle detection</li>
+                    </ul>
+                </div>
+
+                <!-- Power & Communication -->
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Power & Comms</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><strong>4x Solar Panels:</strong> Parallel wiring for reliability</li>
+                        <li><strong>18650 Battery:</strong> Weeks of autonomous operation</li>
+                        <li><strong>Wi-Fi/BLE Mesh:</strong> Node-to-node communication</li>
+                        <li><strong>LoRa Ready:</strong> 15km line-of-sight range</li>
+                        <li><strong>Gateway Stakes:</strong> Cloud connectivity</li>
+                        <li><strong>Smart Reporting:</strong> Hourly updates, daily summaries</li>
+                    </ul>
+                </div>
+
+                <!-- Modular Design -->
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Modular Design</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li><strong>JST Connectors:</strong> Plug-and-play sensor swapping</li>
+                        <li><strong>Rugged PVC Housing:</strong> Weather-resistant construction</li>
+                        <li><strong>Frosted Diffusion Dome:</strong> Light sensor protection</li>
+                        <li><strong>Easy Deployment:</strong> Push-to-install design</li>
+                        <li><strong>Field Serviceable:</strong> Component-level replacement</li>
+                        <li><strong>Scalable Architecture:</strong> Mesh network expansion</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Key Performance Metrics -->
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-3xl font-bold text-wildfire-red mb-2">15 km</div>
+                    <div class="text-sm text-gray-600">LoRa Mesh Range</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-3xl font-bold text-agrinota-green mb-2">1hr</div>
+                    <div class="text-sm text-gray-600">Regular Updates</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">24/7</div>
+                    <div class="text-sm text-gray-600">Solar Powered</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+                    <div class="text-3xl font-bold text-purple-600 mb-2">10+</div>
+                    <div class="text-sm text-gray-600">Sensor Types</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section id="founder" class="py-24 bg-white px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Founder</h2>
+            </div>
+            
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                <div class="text-center md:text-left order-2 md:order-1">
+                    <h3 class="text-4xl font-bold text-gray-900 mb-2">Aqsa Choudry</h3>
+                    <p class="text-xl text-wildfire-red mb-6 font-semibold">Founder & CEO</p>
+                    
+                    <!-- Personal Quote -->
+                    <blockquote class="bg-gray-50 p-8 rounded-xl mb-8 border-l-4 border-wildfire-red">
+                        <p class="text-lg text-gray-800 italic leading-relaxed">
+                            "Ever since I was a child, I was fascinated by how <strong>technology could change lives</strong>—not just through everyday convenience but by preventing crises before they begin. That's why I founded Agrinota: to give the earth a voice and help us listen before it's too late."
+                        </p>
+                    </blockquote>
+                    
+                    <div class="space-y-3">
+                        <p class="text-gray-600"><span class="font-semibold">Location:</span> San Francisco, CA</p>
+                        <p class="text-gray-600"><span class="font-semibold">Email:</span> team@agrinota.org</p>
+                        <div class="flex space-x-4 justify-center md:justify-start mt-6">
+                            <a href="https://linkedin.com/in/aqsa-choudry-434a67245" class="text-wildfire-red hover:text-red-700 font-semibold transition-colors" target="_blank">LinkedIn</a>
+                            <a href="https://twitter.com/AqsaChoudryfrfr" class="text-wildfire-red hover:text-red-700 font-semibold transition-colors" target="_blank">X</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-1 md:order-2 flex justify-center">
+                    <div class="relative">
+                        <img src="Aqsa Professional Headshot Circular.png" alt="Aqsa Choudry - Founder" class="w-64 h-64 rounded-full shadow-2xl" onerror="this.src='placeholder.svg'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partnerships Section -->
+    <section id="partnerships" class="py-24 bg-gray-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-6xl font-bold text-gray-900 mb-6">Partnerships & Pilot Opportunities</h2>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white p-12 rounded-2xl shadow-lg mb-12">
+                    <p class="text-xl text-gray-800 leading-relaxed mb-8">
+                        We're seeking <strong class="text-wildfire-red">3–5 launch partners</strong>—fire districts, utilities, land‑trust nonprofits, growers, or property owners—ready to test 50–250 Guardian stakes and co‑develop response workflows.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="text-center p-4">
+                            <div class="mb-2"><svg class="w-8 h-8 mx-auto text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></div>
+                            <h4 class="font-semibold text-wildfire-red">Hardware & Installation</h4>
+                            <p class="text-sm text-gray-600">Provided at no cost during pilot</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="mb-2"><svg class="w-8 h-8 mx-auto text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+                            <h4 class="font-semibold text-wildfire-red">Dashboard Access</h4>
+                            <p class="text-sm text-gray-600">Real-time monitoring interface</p>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="mb-2"><svg class="w-8 h-8 mx-auto text-wildfire-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
+                            <h4 class="font-semibold text-wildfire-red">Partnership</h4>
+                            <p class="text-sm text-gray-600">Co-develop response workflows</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-lg text-gray-700 text-center">
+                        You supply site access, feedback, and a shared mission to end megafires.
+                    </p>
+                </div>
+                
+                <div class="bg-wildfire-red text-white p-8 rounded-xl text-center">
+                    <p class="text-xl mb-6">
+                        Agrinota is currently raising a <strong>$500k pre‑seed round</strong> to finalize firmware v1, manufacture the first production run, and launch the beta dashboard.
+                    </p>
+                    <p class="text-lg mb-8 opacity-90">
+                        If you'd like to invest or partner, get in touch.
+                    </p>
+                    <div class="space-x-4">
+                        <a href="pilot-contact.html" 
+                           class="bg-white text-wildfire-red px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">
+                            Apply for Pilot Program
+                        </a>
+                        <button onclick="window.open('mailto:team@agrinota.org?subject=Investment Interest', '_blank')" 
+                                class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                            Invest or Partner
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- General Inquiries Section -->
+    <section id="contact" class="py-16 md:py-24 bg-white px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Have Other Questions?</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed font-light">
+                    Not ready for a pilot program? Have technical questions? Want to explore other partnership opportunities? 
+                    We'd love to hear from you.
+                </p>
+            </div>
+            
+            <div class="bg-gray-50 p-8 md:p-12 rounded-3xl shadow-lg">
+                <form onsubmit="handleContactSubmit(event)">
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-3">What's your inquiry about? *</label>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <label class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-wildfire-red cursor-pointer transition-colors">
+                                <input type="radio" name="inquiry_type" value="technical" required class="mr-3 text-wildfire-red">
+                                <span class="text-sm">Technical specifications</span>
+                            </label>
+                            <label class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-wildfire-red cursor-pointer transition-colors">
+                                <input type="radio" name="inquiry_type" value="investment" required class="mr-3 text-wildfire-red">
+                                <span class="text-sm">Investment opportunities</span>
+                            </label>
+                            <label class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-wildfire-red cursor-pointer transition-colors">
+                                <input type="radio" name="inquiry_type" value="research" required class="mr-3 text-wildfire-red">
+                                <span class="text-sm">Research collaboration</span>
+                            </label>
+                            <label class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-wildfire-red cursor-pointer transition-colors">
+                                <input type="radio" name="inquiry_type" value="media" required class="mr-3 text-wildfire-red">
+                                <span class="text-sm">Media/Press inquiry</span>
+                            </label>
+                            <label class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-wildfire-red cursor-pointer transition-colors">
+                                <input type="radio" name="inquiry_type" value="government" required class="mr-3 text-wildfire-red">
+                                <span class="text-sm">Government agency</span>
+                            </label>
+                            <label class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-wildfire-red cursor-pointer transition-colors">
+                                <input type="radio" name="inquiry_type" value="other" required class="mr-3 text-wildfire-red">
+                                <span class="text-sm">Other/General question</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Your Name *</label>
+                            <input type="text" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-wildfire-red focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Email *</label>
+                            <input type="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-wildfire-red focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-2">Organization (Optional)</label>
+                        <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-wildfire-red focus:border-transparent">
+                    </div>
+                    
+                    <div class="mb-8">
+                        <label class="block text-gray-700 font-medium mb-2">Your Question or Message *</label>
+                        <textarea rows="5" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-wildfire-red focus:border-transparent"
+                                  placeholder="Tell us what's on your mind..."></textarea>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-4">For pilot program applications, please use our <a href="pilot-contact.html" class="text-wildfire-red hover:text-red-700 font-medium">dedicated pilot form</a>.</p>
+                        <button type="submit" class="bg-wildfire-red text-white px-12 py-4 rounded-xl text-xl font-medium hover:bg-red-700 transition-colors shadow-lg">
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center mb-6">
+                <img src="Agrinota 500 x 500 Black and White Logo.png" alt="Agrinota Logo" class="h-48 w-auto" onerror="this.style.display='none'">
+            </div>
+            <p class="text-gray-300 mb-4 text-lg font-light">Building the next generation of wildfire intelligence.</p>
+            <p class="text-gray-400 mb-8 font-light">Agrinota, Inc. is a Delaware C‑Corp.</p>
+            <p class="text-sm text-gray-500 font-light">© 2025 Agrinota, Inc. | San Francisco, CA | All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToContact() {
+            document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Get form values
+            const inquiryType = formData.get('inquiry_type');
+            const name = form.querySelector('input[name="name"]') ? form.querySelector('input[name="name"]').value : form.querySelector('input[type="text"]').value;
+            const email = form.querySelector('input[type="email"]').value;
+            const organization = form.querySelector('input[name="organization"]') ? form.querySelector('input[name="organization"]').value : (form.querySelector('input[type="text"]:not([name="name"])')?.value || '');
+            const message = form.querySelector('textarea').value;
+            
+            // Create mailto link with form data
+            const subject = encodeURIComponent(`${inquiryType ? inquiryType.charAt(0).toUpperCase() + inquiryType.slice(1) + ' Inquiry' : 'Contact'} from Agrinota Website`);
+            const body = encodeURIComponent(`Inquiry Type: ${inquiryType || 'General'}\nName: ${name}\nEmail: ${email}\nOrganization: ${organization || 'N/A'}\n\nMessage:\n${message}`);
+            
+            window.open(`mailto:team@agrinota.org?subject=${subject}&body=${body}`, '_blank');
+            
+            alert(`Thank you ${name}! Your message will open in your email client. Please send it to complete your inquiry.`);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+
+
+        // Open 3D viewer in new window
+        function open3DViewer() {
+            const viewerWindow = window.open(
+                '3d-viewer.html',
+                '3DViewer',
+                'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no,scrollbars=no,resizable=yes'
+            );
+            
+            if (viewerWindow) {
+                viewerWindow.focus();
+            } else {
+                // Fallback if popup blocked
+                window.location.href = '3d-viewer.html';
+            }
+        }
+    </script>
+
+    <!-- Component Carousel Styles -->
+    <style>
+        .carousel-dot.active {
+            background-color: #6b7280 !important;
+        }
+        
+        .carousel-container {
+            overflow: hidden;
+        }
+        
+        /* Professional gradient icon animations */
+        .gradient-icon-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-icon-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .gradient-icon-container:hover::before {
+            left: 100%;
+        }
+        
+        .gradient-icon-container:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        /* Pulse animation for important icons */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+            50% {
+                box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+            }
+        }
+        
+        .gradient-icon-container {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        /* Professional shine effect */
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(300px) rotate(45deg); }
+        }
+        
+        .gradient-icon-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8), transparent);
+            animation: shine 2s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+    </style>
+    
+    <script>
+        // Component Carousel Functionality
+        let currentSlide = 0;
+        const totalSlides = 7;
+        
+        function updateCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            // Update track position
+            const translateX = -currentSlide * 100;
+            track.style.transform = `translateX(${translateX}%)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+        
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+        
+        function goToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            updateCarousel();
+        }
+        
+        // Initialize carousel when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation buttons
+            document.getElementById('carousel-next').addEventListener('click', nextSlide);
+            document.getElementById('carousel-prev').addEventListener('click', prevSlide);
+            
+            // Dot navigation
+            document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+                dot.addEventListener('click', () => goToSlide(index));
+            });
+            
+            // Auto-advance carousel every 8 seconds
+            setInterval(nextSlide, 8000);
+            
+            // Initialize carousel state
+            updateCarousel();
+            
+            // Initialize 3D stake model with delay to ensure libraries are loaded
+            setTimeout(() => {
+                init3DStake();
+            }, 100);
+        });
+        
+        // 3D Stake Model Viewer
+        function init3DStake() {
+            const container = document.getElementById('stake-3d-container');
+            const loadingDiv = document.getElementById('stake-loading');
+            
+            if (!container) {
+                console.error('Container not found');
+                return;
+            }
+            
+            // Check if Three.js is loaded
+            if (typeof THREE === 'undefined') {
+                console.error('THREE.js not loaded');
+                if (loadingDiv) {
+                    loadingDiv.textContent = 'Failed to load 3D libraries';
+                    loadingDiv.style.color = '#ef4444';
+                }
+                return;
+            }
+            
+            console.log('Initializing 3D stake model...');
+            console.log('THREE.js version:', THREE.REVISION);
+            console.log('STLLoader available:', typeof THREE.STLLoader !== 'undefined');
+            
+            // Create scene, camera, and renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            
+            // Create gradient background
+            const canvas = renderer.domElement;
+            const context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            // Set up beautiful gradient background
+            scene.background = new THREE.Color(0x0f172a); // Dark blue base
+            scene.fog = new THREE.Fog(0x0f172a, 8, 20); // Add depth with fog
+            
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.4;
+            
+            container.appendChild(renderer.domElement);
+            
+            // No orbit controls - stationary view only
+            
+            // Enhanced lighting for green iridescent material
+            // Ambient light with green tint
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            // Main spotlight with warm white
+            const mainSpotlight = new THREE.SpotLight(0xffffff, 3.0, 100, Math.PI / 6, 0.1);
+            mainSpotlight.position.set(3, 4, 6);
+            mainSpotlight.target.position.set(0, 0, 0);
+            mainSpotlight.castShadow = true;
+            scene.add(mainSpotlight);
+            scene.add(mainSpotlight.target);
+            
+            // Iridescent rim lights
+            const rimLight1 = new THREE.DirectionalLight(0x00ffff, 1.5); // Cyan
+            rimLight1.position.set(-4, 2, -3);
+            scene.add(rimLight1);
+            
+            const rimLight2 = new THREE.DirectionalLight(0xff00ff, 1.5); // Magenta
+            rimLight2.position.set(4, -2, -3);
+            scene.add(rimLight2);
+            
+            // Holographic side lights
+            const sideLight1 = new THREE.DirectionalLight(0xffff00, 1.2); // Yellow
+            sideLight1.position.set(6, 0, 0);
+            scene.add(sideLight1);
+            
+            const sideLight2 = new THREE.DirectionalLight(0x00ff00, 1.2); // Pure green
+            sideLight2.position.set(-6, 0, 0);
+            scene.add(sideLight2);
+            
+            // Holographic accent lights
+            const accentLight1 = new THREE.PointLight(0xffff00, 1.5, 50); // Yellow
+            accentLight1.position.set(2, 3, 2);
+            scene.add(accentLight1);
+            
+            const accentLight2 = new THREE.PointLight(0xff0080, 1.5, 50); // Pink
+            accentLight2.position.set(-2, -3, 2);
+            scene.add(accentLight2);
+            
+            // Store lights for animation
+            const dynamicLights = [rimLight1, rimLight2, sideLight1, sideLight2, accentLight1, accentLight2];
+            
+            // Load compressed stake with better error handling
+            function loadCompressedStake() {
+                console.log('Starting 3D model loading...');
+                console.log('THREE.js version:', THREE.REVISION);
+                console.log('GLTFLoader available:', typeof THREE.GLTFLoader !== 'undefined');
+                console.log('DRACOLoader available:', typeof THREE.DRACOLoader !== 'undefined');
+                
+                if (typeof THREE.GLTFLoader === 'undefined') {
+                    console.error('GLTFLoader not available');
+                    if (loadingDiv) {
+                        loadingDiv.textContent = 'GLTFLoader not loaded';
+                        loadingDiv.style.color = '#ef4444';
+                    }
+                    return;
+                }
+                
+                // Try loading without Draco first to test basic functionality
+                const gltfLoader = new THREE.GLTFLoader();
+                console.log('Attempting to load: agrinota-stake-original.glb');
+                
+                gltfLoader.load(
+                    './agrinota-stake-original.glb',
+                    function (gltf) {
+                        console.log('GLB loaded successfully!', gltf);
+                        const model = gltf.scene;
+                        
+                        // Realistic professional material
+                        const professionalMaterial = new THREE.MeshPhongMaterial({
+                            color: 0x8c8c8c,  // Medium gray
+                            specular: 0x222222,  // Dark specular
+                            shininess: 30,
+                            side: THREE.DoubleSide
+                        });
+                        
+                        model.traverse((child) => {
+                            if (child.isMesh) {
+                                console.log('Applying professional material to mesh:', child.name);
+                                child.material = professionalMaterial;
+                                child.material.needsUpdate = true;
+                                child.castShadow = true;
+                                child.receiveShadow = true;
+                            }
+                        });
+                        
+                        // Get model dimensions
+                        const box = new THREE.Box3().setFromObject(model);
+                        const size = box.getSize(new THREE.Vector3());
+                        
+                        // Zoom in 75% total (scale up to 5.625)
+                        const maxDimension = Math.max(size.x, size.y, size.z);
+                        const scaleFactor = 5.625 / maxDimension;
+                        model.scale.setScalar(scaleFactor);
+                        
+                        // Mirror horizontally - swap left and right sides
+                        model.rotation.set(0, -Math.PI / 2, -Math.PI / 2);
+                        
+                        // Center the model at origin (0,0,0) after all transformations
+                        const finalBox = new THREE.Box3().setFromObject(model);
+                        const finalCenter = finalBox.getCenter(new THREE.Vector3());
+                        model.position.set(-finalCenter.x, -finalCenter.y, -finalCenter.z);
+                        
+                        scene.add(model);
+                        console.log('Model added to scene');
+                        
+                        // Material already applied above
+                        
+                        // Position camera very close for up-close detailed view
+                        camera.position.set(0, 0, 1.5);
+                        camera.lookAt(0, 0, 0);
+                        
+                        // Remove loading text
+                        if (loadingDiv) loadingDiv.remove();
+                        
+                        // Store the exact centered position - no rotation needed
+                        const centeredPosition = model.position.clone();
+                        
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            
+                            // Keep stake perfectly still and centered - no rotation
+                            model.position.copy(centeredPosition);
+                            
+                            renderer.render(scene, camera);
+                        }
+                        animate();
+                        console.log('Animation started');
+                    },
+                    function (progress) {
+                        console.log('Loading progress:', progress);
+                        if (loadingDiv && progress.total > 0) {
+                            const percentComplete = (progress.loaded / progress.total * 100);
+                            loadingDiv.textContent = `Loading... ${Math.round(percentComplete)}%`;
+                        }
+                    },
+                    function (error) {
+                        console.error('Detailed error loading GLB:', error);
+                        console.error('Error type:', error.constructor.name);
+                        console.error('Error message:', error.message);
+                        if (loadingDiv) {
+                            loadingDiv.textContent = `Error: ${error.message || 'Failed to load model'}`;
+                            loadingDiv.style.color = '#ef4444';
+                        }
+                    }
+                );
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const width = container.offsetWidth;
+                const height = container.offsetHeight;
+                
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+            
+            // Simple, clean 3D model viewer with amazing shaders
+            function loadSimpleSTLViewer() {
+                console.log('Loading 3D model with beautiful shaders...');
+                
+                // Add orbit controls for user interaction - balanced for smooth inspection
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.03; // Smooth but responsive
+                controls.autoRotate = false;
+                controls.enableZoom = true;
+                controls.enablePan = true;
+                controls.rotateSpeed = 1.2; // Moderate rotation speed
+                controls.zoomSpeed = 1.5; // Smooth zooming
+                controls.panSpeed = 1.0; // Normal panning
+                controls.minDistance = 0.8; // Close inspection
+                controls.maxDistance = 15; // Reasonable zoom out
+                controls.minPolarAngle = 0; // Full vertical range for viewing around
+                controls.maxPolarAngle = Math.PI; // Full vertical range
+                controls.minAzimuthAngle = -Infinity; // Unlimited horizontal rotation
+                controls.maxAzimuthAngle = Infinity; // Unlimited horizontal rotation
+                controls.enabled = true;
+                
+                // Load STL model directly
+                console.log('Loading STL model...');
+                console.log('STLLoader available:', typeof THREE.STLLoader !== 'undefined');
+                
+                if (typeof THREE.STLLoader === 'undefined') {
+                    console.error('STLLoader not available!');
+                    if (loadingDiv) {
+                        loadingDiv.textContent = 'STLLoader not available';
+                        loadingDiv.style.color = '#ef4444';
+                    }
+                    return;
+                }
+                
+                const stlLoader = new THREE.STLLoader();
+                console.log('STL Loader created successfully');
+                stlLoader.load(
+                    './Agrinota Fully Assembled Final.stl',
+                    function (geometry) {
+                        console.log('STL loaded successfully!', geometry);
+                        
+                        // Compute normals for proper lighting
+                        geometry.computeVertexNormals();
+                        
+                        // Create material
+                        const material = new THREE.MeshLambertMaterial({ 
+                            color: 0x00AA00,  // Green color
+                            side: THREE.DoubleSide 
+                        });
+                        
+                        const model = new THREE.Mesh(geometry, material);
+                        
+                        // Center and scale the model
+                        const box = new THREE.Box3().setFromObject(model);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        
+                        console.log('Model size:', size.x, 'x', size.y, 'x', size.z);
+                        console.log('Model center:', center.x, center.y, center.z);
+                        
+                        // Move model to origin
+                        model.position.x = -center.x;
+                        model.position.y = -center.y;
+                        model.position.z = -center.z;
+                        
+                        // Scale to fit viewport with larger scale
+                        const maxDimension = Math.max(size.x, size.y, size.z);
+                        const scaleFactor = 5 / maxDimension; // Bigger scale
+                        model.scale.setScalar(scaleFactor);
+                        
+                        console.log('Scale factor:', scaleFactor);
+                        
+                        scene.add(model);
+                        
+                        // Position camera very close for up-close detailed view (matching working version)
+                        camera.position.set(0, 0, 1.5);
+                        camera.lookAt(0, 0, 0);
+                        
+                        console.log('Camera positioned at: 0, 0, 1.5 (close up)');
+                        
+                        // Update controls
+                        controls.target.set(0, 0, 0);
+                        
+                        // Remove loading text
+                        if (loadingDiv) loadingDiv.remove();
+                        
+                        // Start render loop
+                        function animate() {
+                            requestAnimationFrame(animate);
+                            controls.update();
+                            renderer.render(scene, camera);
+                        }
+                        animate();
+                        
+                        console.log('STL 3D viewer initialized successfully!');
+                    },
+                    function (progress) {
+                        console.log('Loading progress:', (progress.loaded / progress.total) * 100 + '%');
+                        if (loadingDiv) loadingDiv.textContent = 'Loading STL model... ' + Math.round((progress.loaded / progress.total) * 100) + '%';
+                    },
+                    function (error) {
+                        console.error('STL loading failed:', error);
+                        if (loadingDiv) {
+                            loadingDiv.textContent = 'Failed to load STL model: ' + error.message;
+                            loadingDiv.style.color = '#ef4444';
+                        }
+                    }
+                );
+            }
+            
+            // Load the beautiful STL model
+            loadSimpleSTLViewer();
+        }
+    </script>
+
+
+
+
+</body>
+</html>

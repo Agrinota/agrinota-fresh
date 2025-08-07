@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota - Turn Plants Into Climate Sensors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'agrinota-green': '#0B6623',
+                        'agrinota-light': '#F0F4F2',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- Early Stage Banner -->
+    <div class="bg-agrinota-green text-white py-2 px-4 text-center text-sm">
+        <span class="font-semibold">🚀 Early Stage Startup</span> - Building AI-powered wildfire detection and prevention for California and beyond
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="Agrinota Logo Clear.png" alt="Agrinota Logo" class="h-8 w-auto mr-3" onerror="this.style.display='none'">
+                    <h1 class="text-2xl font-bold text-agrinota-green">Agrinota</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="text-gray-700 hover:text-agrinota-green">About</a>
+                    <a href="#device" class="text-gray-700 hover:text-agrinota-green">Device</a>
+                    <a href="#impact" class="text-gray-700 hover:text-agrinota-green">Impact</a>
+                    <a href="#founder" class="text-gray-700 hover:text-agrinota-green">Founder</a>
+                    <a href="demo.html" class="bg-agrinota-green text-white px-4 py-2 rounded-lg hover:bg-green-700">Dashboard Demo</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-20 px-4 bg-gradient-to-br from-green-50 to-blue-50">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-6xl font-bold text-gray-900 mb-8">
+                Turn Plants Into<br>
+                <span class="text-agrinota-green">Climate Sensors</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-12 max-w-4xl mx-auto">
+                IoT-powered urban forestry monitoring network for real-time climate tracking, wildfire detection, and environmental insights. Transforming trees into intelligent sensors for a safer, more sustainable future.
+            </p>
+            <div class="space-x-4">
+                <button onclick="scrollToWaitlist()" class="bg-agrinota-green text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg">
+                    Join Waitlist
+                </button>
+                <a href="demo.html" class="inline-block border-2 border-agrinota-green text-agrinota-green px-10 py-4 rounded-lg text-lg font-semibold hover:bg-agrinota-light transition-colors">
+                    View Dashboard Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is Agrinota -->
+    <section id="about" class="py-20 bg-white px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold text-gray-900 mb-6">What is Agrinota?</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    A revolutionary IoT system that transforms urban trees into intelligent climate monitoring stations. Our devices attach to existing trees and provide real-time environmental data, wildfire detection, and AI-powered insights for climate research and urban planning.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="text-center group hover:transform hover:scale-105 transition-all">
+                    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-agrinota-green group-hover:text-white transition-colors">
+                        <span class="text-3xl">🌱</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">IoT Sensors</h3>
+                    <p class="text-gray-600 leading-relaxed">Advanced environmental sensors monitor temperature, humidity, air quality, soil moisture, and wildfire indicators in real-time, 24/7.</p>
+                </div>
+                
+                <div class="text-center group hover:transform hover:scale-105 transition-all">
+                    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-agrinota-green group-hover:text-white transition-colors">
+                        <span class="text-3xl">📊</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">AI Analytics</h3>
+                    <p class="text-gray-600 leading-relaxed">Machine learning algorithms analyze environmental patterns to provide intelligent insights for climate monitoring, urban planning, and early wildfire detection.</p>
+                </div>
+                
+                <div class="text-center group hover:transform hover:scale-105 transition-all">
+                    <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-agrinota-green group-hover:text-white transition-colors">
+                        <span class="text-3xl">🔥</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">Wildfire Prevention</h3>
+                    <p class="text-gray-600 leading-relaxed">Early detection systems with smoke and flame sensors provide critical wildfire alerts to prevent catastrophic damage in California and beyond.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Device Overview -->
+    <section id="device" class="py-20 bg-gray-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold text-gray-900 mb-6">The Agrinota Device</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    Weatherproof IoT sensors that attach to urban trees and monitor environmental conditions 24/7. Our multi-stake sensor network provides comprehensive coverage for any location.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8">Device Capabilities</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Real-time Environmental Monitoring</h4>
+                                <p class="text-gray-600">Temperature, humidity, air quality, and atmospheric pressure</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Multi-Depth Soil Analysis</h4>
+                                <p class="text-gray-600">Soil moisture monitoring at 30cm, 60cm, and 90cm depths</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Wildfire Detection System</h4>
+                                <p class="text-gray-600">Smoke sensors and flame detection with instant alerts</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Solar-Powered Operation</h4>
+                                <p class="text-gray-600">Low power consumption with solar charging for continuous operation</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Wireless Data Transmission</h4>
+                                <p class="text-gray-600">Real-time data upload with GPS location tracking</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-agrinota-green font-bold mr-4 text-xl">✓</span>
+                            <div>
+                                <h4 class="font-semibold text-lg">Easy Tree Installation</h4>
+                                <p class="text-gray-600">Non-invasive mounting system for existing urban trees</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-green-100 to-blue-100 h-96 rounded-xl flex items-center justify-center shadow-lg">
+                    <div class="text-center">
+                        <span class="text-6xl mb-4 block">🌳</span>
+                        <p class="text-gray-600 text-lg">3D Device Model</p>
+                        <p class="text-sm text-gray-500 mt-2">Interactive visualization coming soon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo Dashboard -->
+    <section class="py-20 bg-agrinota-green text-white px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-6">See It In Action</h2>
+            <p class="text-xl mb-12 max-w-3xl mx-auto opacity-90">
+                Experience our real-time sensor dashboard with live environmental data, AI insights, and wildfire monitoring capabilities.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white bg-opacity-10 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2">6-Stake Network</h3>
+                    <p class="opacity-90">Multi-sensor array coverage</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2">AI Insights</h3>
+                    <p class="opacity-90">Intelligent recommendations</p>
+                </div>
+                <div class="bg-white bg-opacity-10 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2">Real-Time Alerts</h3>
+                    <p class="opacity-90">Instant wildfire detection</p>
+                </div>
+            </div>
+            <a href="demo.html" class="inline-block bg-white text-agrinota-green px-10 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                Launch Dashboard Demo →
+            </a>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="py-20 bg-white px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold text-gray-900 mb-6">Climate Impact</h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    Contributing to global climate research and wildfire prevention efforts through comprehensive environmental monitoring.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-agrinota-green mb-2">24/7</div>
+                    <p class="text-gray-600">Continuous Environmental Monitoring</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-agrinota-green mb-2">Real-Time</div>
+                    <p class="text-gray-600">Wildfire Detection Alerts</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-agrinota-green mb-2">Multi-Depth</div>
+                    <p class="text-gray-600">Soil Moisture Analysis</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-agrinota-green mb-2">AI-Powered</div>
+                    <p class="text-gray-600">Environmental Insights</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section id="founder" class="py-20 bg-gray-50 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold text-gray-900 mb-6">Meet the Founder</h2>
+            </div>
+            
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-center md:text-left order-2 md:order-1">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">Aqsa Choudry</h3>
+                    <p class="text-xl text-agrinota-green mb-6 font-semibold">Founder & CEO</p>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Building AI-powered wildfire detection and prevention technology for California and beyond. Passionate about leveraging IoT innovation to create sustainable environmental monitoring solutions for urban forestry.
+                    </p>
+                    <div class="space-y-3">
+                        <p class="text-gray-600"><span class="font-semibold">Location:</span> San Francisco, CA</p>
+                        <p class="text-gray-600"><span class="font-semibold">Email:</span> team@agrinota.org</p>
+                        <div class="flex space-x-4 justify-center md:justify-start mt-6">
+                            <a href="https://twitter.com/AqsaChoudryfrfr" class="text-agrinota-green hover:text-green-700" target="_blank">Twitter</a>
+                            <a href="https://linkedin.com/in/aqsa-choudry-434a67245" class="text-agrinota-green hover:text-green-700" target="_blank">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2 flex justify-center">
+                    <img src="Aqsa Professional Headshot Circular.png" alt="Aqsa Choudry - Founder" class="w-64 h-64 rounded-full shadow-lg" onerror="this.src='placeholder.svg'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist Section -->
+    <section class="py-20 bg-agrinota-green text-white px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-6">Join the Waitlist</h2>
+            <p class="text-xl mb-12 opacity-90">
+                Be the first to deploy Agrinota sensors in your area. Get early access to our IoT environmental monitoring system and help build a more sustainable future.
+            </p>
+            
+            <form class="max-w-md mx-auto" onsubmit="handleWaitlistSubmit(event)">
+                <div class="mb-6">
+                    <input type="email" placeholder="Enter your email address" required 
+                           class="w-full px-6 py-4 rounded-lg text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-30">
+                </div>
+                <button type="submit" class="w-full bg-white text-agrinota-green px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                    Join Waitlist →
+                </button>
+            </form>
+            
+            <p class="mt-8 text-sm opacity-80">
+                Join the movement towards intelligent environmental monitoring and wildfire prevention.
+            </p>
+        </div>
+    </section>
+
+    <!-- Funding CTA -->
+    <section class="py-20 bg-white px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-5xl font-bold text-gray-900 mb-6">Ready to Invest in the Future?</h2>
+            <p class="text-xl text-gray-600 mb-12">
+                Join us in revolutionizing environmental monitoring and wildfire prevention. We're seeking strategic partners and investors to scale our IoT climate sensing technology.
+            </p>
+            <div class="space-x-4">
+                <button onclick="window.open('mailto:team@agrinota.org?subject=Investment Inquiry', '_blank')" 
+                        class="bg-agrinota-green text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg">
+                    Investor Inquiries
+                </button>
+                <button onclick="window.open('mailto:team@agrinota.org?subject=Partnership Opportunity', '_blank')"
+                        class="border-2 border-agrinota-green text-agrinota-green px-10 py-4 rounded-lg text-lg font-semibold hover:bg-agrinota-light transition-colors">
+                    Partnership Opportunities
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <img src="Agrinota Logo Clear.png" alt="Agrinota Logo" class="h-8 w-auto mr-3" onerror="this.style.display='none'">
+                        <h3 class="text-2xl font-bold">Agrinota</h3>
+                    </div>
+                    <p class="text-gray-400">Transforming urban forestry through IoT innovation and AI-powered environmental monitoring.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#device" class="hover:text-white">IoT Sensors</a></li>
+                        <li><a href="demo.html" class="hover:text-white">Dashboard Demo</a></li>
+                        <li><a href="#about" class="hover:text-white">Technology</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#founder" class="hover:text-white">About</a></li>
+                        <li><a href="#impact" class="hover:text-white">Impact</a></li>
+                        <li><a href="mailto:team@agrinota.org" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://twitter.com/AqsaChoudryfrfr" class="hover:text-white" target="_blank">Twitter</a></li>
+                        <li><a href="https://linkedin.com/in/aqsa-choudry-434a67245" class="hover:text-white" target="_blank">LinkedIn</a></li>
+                        <li><a href="mailto:team@agrinota.org" class="hover:text-white">Email</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Agrinota. All rights reserved. | San Francisco, CA</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToWaitlist() {
+            document.querySelector('section:has(form)').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleWaitlistSubmit(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            alert(`Thank you! We'll be in touch soon at ${email}`);
+            event.target.reset();
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

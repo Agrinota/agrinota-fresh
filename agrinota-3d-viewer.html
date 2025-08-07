@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrinota 3D Model Viewer</title>
+    <script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.157.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.157.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://unpkg.com/three@0.157.0/examples/js/loaders/DRACOLoader.js"></script>
+    <script src="https://unpkg.com/three@0.157.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: #0a0a0a;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+        .button {
+            background: #0B6623;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .button:hover {
+            background: #228B22;
+            transform: scale(1.05);
+        }
+        .button.active {
+            background: #FF6B35;
+        }
+        #info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            max-width: 300px;
+        }
+        .model-selector {
+            margin-bottom: 10px;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="loading">Loading 3D Model...</div>
+        <canvas id="canvas"></canvas>
+    </div>
+    
+    <div id="controls">
+        <h3 style="margin-top: 0;">Agrinota 3D Model Viewer</h3>
+        
+        <div class="model-selector">
+            <label>Select Model:</label>
+            <select id="modelSelect">
+                <option value="agrinota-stake-compressed.glb">Stake Model (Compressed)</option>
+                <option value="agrinota-stake-web.glb">Stake Model (Web Optimized)</option>
+                <option value="agrinota-stake-final.glb">Stake Model (Final)</option>
+                <option value="agrinota-stake-hd.glb">Stake Model (HD)</option>
+                <option value="Agrinota Fully Assembled Final.stl">Full Assembly (STL)</option>
+                <option value="3d-models/agrinota-stake.stl">Stake (STL)</option>
+                <option value="AGRINOTA WHOLE 3D VIEW.stl">Agrinota Whole 3D View (STL)</option>
+            </select>
+        </div>
+        
+        <button class="button" id="autoRotate">Auto Rotate</button>
+        <button class="button" id="resetView">Reset View</button>
+        <button class="button" id="wireframe">Wireframe</button>
+        <button class="button" id="explode">Exploded View</button>
+    </div>
+    
+    <div id="info">
+        <h4 style="margin-top: 0;">Controls:</h4>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>Left Click + Drag: Rotate</li>
+            <li>Right Click + Drag: Pan</li>
+            <li>Scroll: Zoom</li>
+            <li>Double Click: Focus</li>
+        </ul>
+        <p style="margin-bottom: 0;">The Agrinota Guardian stake - early wildfire detection through advanced environmental monitoring.</p>
+    </div>
+
+    <script>
+        let scene, camera, renderer, controls;
+        let currentModel = null;
+        let autoRotateEnabled = false;
+        let wireframeEnabled = false;
+        let originalMaterials = new Map();
+        let loadingDiv = document.getElementById('loading');
+
+        function init() {
+            const container = document.getElementById('container');
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0a);
+            scene.fog = new THREE.Fog(0x0a0a0a, 10, 50);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(
+                45,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(5, 5, 5);
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true,
+                canvas: document.getElementById('canvas')
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = false;
+            controls.autoRotateSpeed = 2.0;
+
+            // Lights
+            setupLights();
+
+            // Load initial model
+            loadModel('agrinota-stake-compressed.glb');
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            setupControls();
+
+            // Start animation loop
+            animate();
+        }
+
+        function setupLights() {
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            // Main directional light
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.camera.near = 0.1;
+            mainLight.shadow.camera.far = 50;
+            mainLight.shadow.camera.left = -10;
+            mainLight.shadow.camera.right = 10;
+            mainLight.shadow.camera.top = 10;
+            mainLight.shadow.camera.bottom = -10;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+
+            // Rim lights for dramatic effect
+            const rimLight1 = new THREE.DirectionalLight(0x00ff88, 0.5);
+            rimLight1.position.set(-5, 0, -5);
+            scene.add(rimLight1);
+
+            const rimLight2 = new THREE.DirectionalLight(0x8800ff, 0.5);
+            rimLight2.position.set(5, 0, -5);
+            scene.add(rimLight2);
+
+            // Ground plane for shadows
+            const groundGeometry = new THREE.PlaneGeometry(50, 50);
+            const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+        }
+
+        function loadModel(modelPath) {
+            loadingDiv.style.display = 'block';
+            
+            // Remove existing model
+            if (currentModel) {
+                scene.remove(currentModel);
+                currentModel = null;
+            }
+
+            const fullPath = modelPath;
+            console.log('Loading model:', fullPath);
+
+            if (modelPath.endsWith('.glb') || modelPath.endsWith('.gltf')) {
+                loadGLTF(fullPath);
+            } else if (modelPath.endsWith('.stl')) {
+                loadSTL(fullPath);
+            }
+        }
+
+        function loadGLTF(path) {
+            const loader = new THREE.GLTFLoader();
+            
+            // Setup Draco loader for compressed models
+            const dracoLoader = new THREE.DRACOLoader();
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+            loader.setDRACOLoader(dracoLoader);
+
+            loader.load(
+                path,
+                (gltf) => {
+                    currentModel = gltf.scene;
+                    setupModel(currentModel);
+                    loadingDiv.style.display = 'none';
+                },
+                (progress) => {
+                    const percent = (progress.loaded / progress.total * 100).toFixed(0);
+                    loadingDiv.textContent = `Loading: ${percent}%`;
+                },
+                (error) => {
+                    console.error('Error loading GLTF:', error);
+                    loadingDiv.textContent = 'Error loading model';
+                    loadingDiv.style.color = '#ff0000';
+                }
+            );
+        }
+
+        function loadSTL(path) {
+            const loader = new THREE.STLLoader();
+            
+            loader.load(
+                path,
+                (geometry) => {
+                    const material = new THREE.MeshPhongMaterial({
+                        color: 0x0B6623,
+                        specular: 0x111111,
+                        shininess: 200,
+                        side: THREE.DoubleSide
+                    });
+                    
+                    currentModel = new THREE.Mesh(geometry, material);
+                    setupModel(currentModel);
+                    loadingDiv.style.display = 'none';
+                },
+                (progress) => {
+                    if (progress.total > 0) {
+                        const percent = (progress.loaded / progress.total * 100).toFixed(0);
+                        loadingDiv.textContent = `Loading: ${percent}%`;
+                    }
+                },
+                (error) => {
+                    console.error('Error loading STL:', error);
+                    loadingDiv.textContent = 'Error loading model';
+                    loadingDiv.style.color = '#ff0000';
+                }
+            );
+        }
+
+        function setupModel(model) {
+            // Store original materials
+            originalMaterials.clear();
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    originalMaterials.set(child, child.material);
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+
+            // Center and scale model
+            const box = new THREE.Box3().setFromObject(model);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 5 / maxDim;
+            model.scale.multiplyScalar(scale);
+            
+            model.position.sub(center.multiplyScalar(scale));
+            
+            scene.add(model);
+            
+            // Reset camera
+            resetView();
+        }
+
+        function setupControls() {
+            // Model selector
+            document.getElementById('modelSelect').addEventListener('change', (e) => {
+                loadModel(e.target.value);
+            });
+
+            // Auto rotate
+            document.getElementById('autoRotate').addEventListener('click', () => {
+                autoRotateEnabled = !autoRotateEnabled;
+                controls.autoRotate = autoRotateEnabled;
+                document.getElementById('autoRotate').classList.toggle('active', autoRotateEnabled);
+            });
+
+            // Reset view
+            document.getElementById('resetView').addEventListener('click', resetView);
+
+            // Wireframe
+            document.getElementById('wireframe').addEventListener('click', toggleWireframe);
+
+            // Exploded view
+            document.getElementById('explode').addEventListener('click', toggleExplodedView);
+        }
+
+        function resetView() {
+            camera.position.set(5, 5, 5);
+            camera.lookAt(0, 0, 0);
+            controls.reset();
+        }
+
+        function toggleWireframe() {
+            wireframeEnabled = !wireframeEnabled;
+            document.getElementById('wireframe').classList.toggle('active', wireframeEnabled);
+            
+            if (currentModel) {
+                currentModel.traverse((child) => {
+                    if (child.isMesh) {
+                        if (wireframeEnabled) {
+                            child.material = new THREE.MeshBasicMaterial({
+                                color: 0x00ff00,
+                                wireframe: true
+                            });
+                        } else {
+                            child.material = originalMaterials.get(child) || child.material;
+                        }
+                    }
+                });
+            }
+        }
+
+        function toggleExplodedView() {
+            const button = document.getElementById('explode');
+            const isExploded = button.classList.contains('active');
+            button.classList.toggle('active');
+            
+            if (currentModel) {
+                currentModel.traverse((child) => {
+                    if (child.isMesh) {
+                        const targetScale = isExploded ? 1 : 1.5;
+                        const targetPosition = child.position.clone().multiplyScalar(isExploded ? 1 : 2);
+                        
+                        // Animate explosion
+                        const startScale = child.scale.x;
+                        const startPos = child.position.clone();
+                        const duration = 1000;
+                        const startTime = Date.now();
+                        
+                        function animateExplosion() {
+                            const elapsed = Date.now() - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            const eased = 1 - Math.pow(1 - progress, 3);
+                            
+                            if (!isExploded) {
+                                child.position.lerpVectors(startPos, targetPosition, eased);
+                            } else {
+                                child.position.lerpVectors(startPos, new THREE.Vector3(0, 0, 0), eased);
+                            }
+                            
+                            if (progress < 1) {
+                                requestAnimationFrame(animateExplosion);
+                            }
+                        }
+                        
+                        animateExplosion();
+                    }
+                });
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
